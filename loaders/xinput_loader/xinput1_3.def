@@ -1,0 +1,11 @@
+LIBRARY "xinput1_3"
+
+EXPORTS
+    XInputEnable = mXInputEnable @5
+	XInputGetAudioDeviceIds = mXInputGetAudioDeviceIds @9
+	XInputGetBatteryInformation = mXInputGetBatteryInformation @7
+	XInputGetCapabilities = mXInputGetCapabilities @4
+	XInputGetDSoundAudioDeviceGuids = mXInputGetDSoundAudioDeviceGuids @6
+	XInputGetKeystroke = mXInputGetKeystroke @8
+	XInputGetState = mXInputGetState @2
+	XInputSetState = mXInputSetState @3

@@ -1,0 +1,3 @@
+move wsock32.dll wsock32_.dll
+dumpbin /exports wsock32_.dll > exports.txt
+wrappit wsock32.dll exports.txt __stdcall .\\wsock32_.dll wsock32.cpp wsock32.def

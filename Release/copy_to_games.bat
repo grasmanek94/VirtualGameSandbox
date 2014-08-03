@@ -1,0 +1,1 @@
+for /r "C:\Games" %%i in (.) do @copy "C:\Files\C++\Release\LaunchGame.exe" "%%i" /y

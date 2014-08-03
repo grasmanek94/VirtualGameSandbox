@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="CppVhdAPI.cpp" />
+    <ClCompile Include="scripting.cpp">
+      <Filter>angelscript</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscriptsdk\add_on\debugger\debugger.cpp">
+      <Filter>angelscript\add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscriptsdk\add_on\scripthelper\scripthelper.cpp">
+      <Filter>angelscript\add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscriptsdk\add_on\scriptbuilder\scriptbuilder.cpp">
+      <Filter>angelscript\add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscriptsdk\add_on\scriptfile\scriptfile.cpp">
+      <Filter>angelscript\add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscriptsdk\add_on\scriptarray\scriptarray.cpp">
+      <Filter>angelscript\add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscriptsdk\add_on\scriptstdstring\scriptstdstring_utils.cpp">
+      <Filter>angelscript\add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscriptsdk\add_on\scriptstdstring\scriptstdstring.cpp">
+      <Filter>angelscript\add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscriptsdk\add_on\scriptmath\scriptmathcomplex.cpp">
+      <Filter>angelscript\add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscriptsdk\add_on\scriptmath\scriptmath.cpp">
+      <Filter>angelscript\add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="Registry\Utils.cpp">
+      <Filter>Registry</Filter>
+    </ClCompile>
+    <ClCompile Include="Registry\Win32Exception.cpp">
+      <Filter>Registry</Filter>
+    </ClCompile>
+    <ClCompile Include="Registry\RegistryKey.cpp">
+      <Filter>Registry</Filter>
+    </ClCompile>
+    <ClCompile Include="Registry\RegKeyIterator.cpp">
+      <Filter>Registry</Filter>
+    </ClCompile>
+    <ClCompile Include="Registry.cpp">
+      <Filter>angelscript</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="angelscript">
+      <UniqueIdentifier>{8bc67516-3ea1-4ea1-b922-919c831760df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="angelscript\add_on">
+      <UniqueIdentifier>{293a478f-b4bd-4f14-8900-44631fdee810}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Registry">
+      <UniqueIdentifier>{50893317-9445-4818-bb79-6a31556ea3b7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Registry\RegKeyIterator.hpp">
+      <Filter>Registry</Filter>
+    </ClInclude>
+    <ClInclude Include="Registry\Utils.hpp">
+      <Filter>Registry</Filter>
+    </ClInclude>
+    <ClInclude Include="Registry\Win32Exception.hpp">
+      <Filter>Registry</Filter>
+    </ClInclude>
+    <ClInclude Include="Registry\CountedRegKey.hpp">
+      <Filter>Registry</Filter>
+    </ClInclude>
+    <ClInclude Include="Registry\ExpandableBuffer.hpp">
+      <Filter>Registry</Filter>
+    </ClInclude>
+    <ClInclude Include="Registry\ReferenceCounted.hpp">
+      <Filter>Registry</Filter>
+    </ClInclude>
+    <ClInclude Include="Registry\RegistryKey.hpp">
+      <Filter>Registry</Filter>
+    </ClInclude>
+    <ClInclude Include="Registry\RegistryList.hpp">
+      <Filter>Registry</Filter>
+    </ClInclude>
+    <ClInclude Include="config.hpp" />
+  </ItemGroup>
+</Project>
