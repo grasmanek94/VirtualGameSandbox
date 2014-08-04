@@ -14,3 +14,5 @@ Optional: Create configuration.cxx on root of newly created drive
 and use angelscript to script initial pre-game lauch config
 Close the console window
 Configure newly created config.cfg
+
+License: zlib
