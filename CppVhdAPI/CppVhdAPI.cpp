@@ -314,7 +314,7 @@ int RunThisProgram()
 			si.cb = sizeof(STARTUPINFO);
 
 			std::cout << "Starting mount..." << std::flush;
-			fSuccess = CreateProcess((Config.GetEnvironmentString("SystemRoot") + "\\system32\\WindowsPowerShell\\v1.0\\powershell.exe").c_str(), (LPSTR)(("\"" + Config.GetEnvironmentString("SystemRoot") + "\\system32\\WindowsPowerShell\\v1.0\\powershell.exe\" ") + "-Command \"initialize-disk " + PhysicalPath + " *>$null\"").c_str(), NULL, NULL, TRUE, dwFlags, NULL, (Config.GetEnvironmentString("HOMEDRIVE") + Config.GetEnvironmentString("HOMEPATH")).c_str(), &si, &pi);
+			fSuccess = CreateProcess((Config.GetEnvironmentString("SystemRoot") + "\\system32\\WindowsPowerShell\\v1.0\\powershell.exe").c_str(), (LPSTR)(("\"" + Config.GetEnvironmentString("SystemRoot") + "\\system32\\WindowsPowerShell\\v1.0\\powershell.exe\" ") + "-Command \"initialize-disk " + PhysicalPath + " *>$null\"").c_str(), NULL, NULL, TRUE, dwFlags, NULL, /*(Config.GetEnvironmentString("HOMEDRIVE") + Config.GetEnvironmentString("HOMEPATH")).c_str()*/NULL, &si, &pi);
 			if (!fSuccess)
 			{
 				DWORD error = GetLastError();
