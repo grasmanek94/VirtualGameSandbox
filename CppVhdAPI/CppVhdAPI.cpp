@@ -428,53 +428,59 @@ int RunThisProgram()
 
 	//
 	std::cout << "Preparing process startup..." << std::flush;
-	DWORD dwFlags = CREATE_SUSPENDED | INHERIT_PARENT_AFFINITY;
-	STARTUPINFO si;
-	PROCESS_INFORMATION pi = PROCESS_INFORMATION();
-	BOOL fSuccess;
-	std::cout << "OK" << std::endl;
-
-	if (Config.UseShellExecute.compare("force") != 0)
+	bool r = true;
+	while (r)
 	{
-		// Create the child process, specifying a new environment block. 
-		SecureZeroMemory(&si, sizeof(STARTUPINFO));
-		si.cb = sizeof(STARTUPINFO);
-		
-		std::cout << "Starting process..." << std::flush;
-		fSuccess = CreateProcess(Config.ApplicationProcess.c_str(), (LPSTR)("\"" + Config.ApplicationProcess + "\" " + Config.ApplicationParameters).c_str(), NULL, NULL, TRUE, dwFlags, NULL, Config.ApplicationWorkingDir.c_str(), &si, &pi);
-		if (!fSuccess)
-		{
-			std::cout << "Unable to launch process " << Config.ApplicationProcess.c_str() << " (" << GetLastError() << ")" << std::endl;
-			return (int)pressanykey("Hit any key to quit the application\r\n");
-		}
-		ResumeThread(pi.hThread);
+		DWORD dwFlags = CREATE_SUSPENDED | INHERIT_PARENT_AFFINITY;
+		STARTUPINFO si;
+		PROCESS_INFORMATION pi = PROCESS_INFORMATION();
+		BOOL fSuccess;
 		std::cout << "OK" << std::endl;
-	}
-	else if (!Config.UseShellExecute.compare("true") || !Config.UseShellExecute.compare("force"))
-	{
-		HANDLE hInstance = INVALID_HANDLE_VALUE;
-		Sleep(1000);
-		if (!IsProcessRunning(pi.dwProcessId))
+
+		if (Config.UseShellExecute.compare("force") != 0)
 		{
-			std::cout << "Trying shellexecute..." << std::flush;
-			CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-			hInstance = ShellExecute(NULL, "open", Config.ApplicationProcess.c_str(), (LPSTR)Config.ApplicationParameters.c_str(), Config.ApplicationWorkingDir.c_str(), SW_SHOWNORMAL);
-			if (hInstance > (HANDLE)32)
-			{
-				std::cout << "OK" << std::endl;
-			}
-			else
+			// Create the child process, specifying a new environment block. 
+			SecureZeroMemory(&si, sizeof(STARTUPINFO));
+			si.cb = sizeof(STARTUPINFO);
+
+			std::cout << "Starting process..." << std::flush;
+			fSuccess = CreateProcess(Config.ApplicationProcess.c_str(), (LPSTR)("\"" + Config.ApplicationProcess + "\" " + Config.ApplicationParameters).c_str(), NULL, NULL, TRUE, dwFlags, NULL, Config.ApplicationWorkingDir.c_str(), &si, &pi);
+			if (!fSuccess)
 			{
 				std::cout << "Unable to launch process " << Config.ApplicationProcess.c_str() << " (" << GetLastError() << ")" << std::endl;
 				return (int)pressanykey("Hit any key to quit the application\r\n");
 			}
+			ResumeThread(pi.hThread);
+			std::cout << "OK" << std::endl;
 		}
-	}
+		else if (!Config.UseShellExecute.compare("true") || !Config.UseShellExecute.compare("force"))
+		{
+			HANDLE hInstance = INVALID_HANDLE_VALUE;
+			Sleep(1000);
+			if (!IsProcessRunning(pi.dwProcessId))
+			{
+				std::cout << "Trying shellexecute..." << std::flush;
+				CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+				hInstance = ShellExecute(NULL, "open", Config.ApplicationProcess.c_str(), (LPSTR)Config.ApplicationParameters.c_str(), Config.ApplicationWorkingDir.c_str(), SW_SHOWNORMAL);
+				if (hInstance > (HANDLE)32)
+				{
+					std::cout << "OK" << std::endl;
+				}
+				else
+				{
+					std::cout << "Unable to launch process " << Config.ApplicationProcess.c_str() << " (" << GetLastError() << ")" << std::endl;
+					return (int)pressanykey("Hit any key to quit the application\r\n");
+				}
+			}
+		}
 
-	pressanykey("Press any key when done playing to close this window (will detach the Virtual Hard Drive too!)\r\n");
-	while (IsProcessRunning(pi.dwProcessId))
-	{
-		pressanykey("Game is still running.\r\n");
+		int ret = pressanykey("Press any key when done playing to close this window (will detach the Virtual Hard Drive too!)\r\n");
+		r = ret == 'R' || ret == 'r';
+		while (IsProcessRunning(pi.dwProcessId))
+		{
+			ret = pressanykey("Game is still running.\r\n");
+			r = ret == 'R' || ret == 'r';
+		}
 	}
 	DetachVirtualDisk(isohandle, DETACH_VIRTUAL_DISK_FLAG_NONE, 0);
 	DetachVirtualDisk(handle, DETACH_VIRTUAL_DISK_FLAG_NONE, 0);
