@@ -392,11 +392,17 @@ int RunThisProgram()
 	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__EMBED_BOXEDAPP_IN_CHILD_PROCESSES, TRUE);
 	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__INHERIT_OPTIONS, TRUE);
 
-	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CLASSES_ROOT,		"HKEY_CURRENT_USER\\VirtualGameSandbox\\CR\\", STANDARD_RIGHTS_ALL | SPECIFIC_RIGHTS_ALL /*| ACCESS_SYSTEM_SECURITY*/, BxIsolationMode_WriteCopy);
-	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_USER,		"HKEY_CURRENT_USER\\VirtualGameSandbox\\CU\\", STANDARD_RIGHTS_ALL | SPECIFIC_RIGHTS_ALL /*| ACCESS_SYSTEM_SECURITY*/, BxIsolationMode_WriteCopy);
-	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE,		"HKEY_CURRENT_USER\\VirtualGameSandbox\\LM\\", STANDARD_RIGHTS_ALL | SPECIFIC_RIGHTS_ALL /*| ACCESS_SYSTEM_SECURITY*/, BxIsolationMode_WriteCopy);
-	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_USERS,				"HKEY_CURRENT_USER\\VirtualGameSandbox\\US\\", STANDARD_RIGHTS_ALL | SPECIFIC_RIGHTS_ALL /*| ACCESS_SYSTEM_SECURITY*/, BxIsolationMode_WriteCopy);
-	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_CONFIG,	"HKEY_CURRENT_USER\\VirtualGameSandbox\\CC\\", STANDARD_RIGHTS_ALL | SPECIFIC_RIGHTS_ALL /*| ACCESS_SYSTEM_SECURITY*/, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CLASSES_ROOT,		"HKEY_CURRENT_USER\\VirtualGameSandbox\\x86\\CR\\", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_USER,		"HKEY_CURRENT_USER\\VirtualGameSandbox\\x86\\CU\\", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE,		"HKEY_CURRENT_USER\\VirtualGameSandbox\\x86\\LM\\", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_USERS,				"HKEY_CURRENT_USER\\VirtualGameSandbox\\x86\\US\\", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_CONFIG,	"HKEY_CURRENT_USER\\VirtualGameSandbox\\x86\\CC\\", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
+
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CLASSES_ROOT,		"HKEY_CURRENT_USER\\VirtualGameSandbox\\x64\\CR\\", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_USER,		"HKEY_CURRENT_USER\\VirtualGameSandbox\\x64\\CU\\", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE,		"HKEY_CURRENT_USER\\VirtualGameSandbox\\x64\\LM\\", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_USERS,				"HKEY_CURRENT_USER\\VirtualGameSandbox\\x64\\US\\", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_CONFIG,	"HKEY_CURRENT_USER\\VirtualGameSandbox\\x64\\CC\\", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
 
 	SetEnvironmentVariable("LOGONSERVER", "\\\\User");
 	SetEnvironmentVariable("USERDOMAIN", "User");
