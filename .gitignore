@@ -244,3 +244,4 @@ FakesAssemblies/
 *.opt
 
 *.dll
+Release/example.vhd

@@ -62,18 +62,18 @@ int main()
 	}
 	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3\\ergc", "", serial, REG_SZ, KEY_ALL_ACCESS);
 
-	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "CD Drive", "Y:\\", REG_SZ, KEY_ALL_ACCESS);
+	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "CD Drive", GetConfig("VHD.MountPoint"), REG_SZ, KEY_ALL_ACCESS);
 	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "DisplayName", "Command & Conquer(TM) Red Alert(TM) 3", REG_SZ, KEY_ALL_ACCESS);
 	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "ProductName", "Command & Conquer(TM) Red Alert(TM) 3", REG_SZ, KEY_ALL_ACCESS);
-	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "Install Dir", "Y:\\Game\\", REG_SZ, KEY_ALL_ACCESS);
-	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "Installed From", "Y:\\", REG_SZ, KEY_ALL_ACCESS);
+	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "Install Dir", GetConfig("VHD.MountPoint") + "Game\\", REG_SZ, KEY_ALL_ACCESS);
+	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "Installed From", GetConfig("VHD.MountPoint"), REG_SZ, KEY_ALL_ACCESS);
 	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "Locale", "en_US", REG_SZ, KEY_ALL_ACCESS);
 	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "Language", "English (US)", REG_SZ, KEY_ALL_ACCESS);
 	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "Patch URL", "http://www.ea.com/redalert", REG_SZ, KEY_ALL_ACCESS);
 	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "Product GUID", "{296D8550-CB06-48E4-9A8B-E5034FB64715}", REG_SZ, KEY_ALL_ACCESS);
 	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "Suppression Exe", "", REG_SZ, KEY_ALL_ACCESS);
 	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "Registration", "Software\\Electronic Arts\\Electronic Arts\\Red Alert 3\\ergc", REG_SZ, KEY_ALL_ACCESS);
-	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "Readme", "Y:\\Game\\Support\\readme.txt", REG_SZ, KEY_ALL_ACCESS);
+	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "Readme", GetConfig("VHD.MountPoint") + "Game\\Support\\readme.txt", REG_SZ, KEY_ALL_ACCESS);
 	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "UserDataLeafName", "Red Alert 3", REG_SZ, KEY_ALL_ACCESS);
 	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "ScreenshotsFolderName", "Screenshots", REG_SZ, KEY_ALL_ACCESS);
 	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Electronic Arts\\Red Alert 3", "ReplayFolderName", "Replays", REG_SZ, KEY_ALL_ACCESS);
@@ -87,5 +87,7 @@ int main()
 		
 	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts, Los Angeles\\Red Alert 3 Mod SDK\\1.00.0000", "", "", REG_SZ, KEY_ALL_ACCESS);
 	REG_SOFTWARE_SET_STR(HKLM, "Electronic Arts\\Command & Conquer(tm) Red Alert(tm) 3 Worldbuilder\\1.0", "", "", REG_SZ, KEY_ALL_ACCESS);
+
+	print("Config OK\r\n");
 	return 0;
 }

@@ -388,10 +388,22 @@ int RunThisProgram()
 
 	std::cout << "Updating environment to configured variables...\r\n" << std::flush;
 
-	BoxedAppSDK_Init();
-	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__EMBED_BOXEDAPP_IN_CHILD_PROCESSES, TRUE);
-	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__INHERIT_OPTIONS, TRUE);
+	std::string MountLetter = Config.MountPoint.substr(0, 1);
 
+	BoxedAppSDK_Init();
+
+	//BoxedAppSDK_SetLogFileW(L"boxedapp.log");
+	//BoxedAppSDK_EnableDebugLog(TRUE);
+
+	//BoxedAppSDK_SetPersistentRegistryPathA("reg.dat");
+
+	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__EMBED_BOXEDAPP_IN_CHILD_PROCESSES, TRUE);
+	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__ENABLE_VIRTUAL_FILE_SYSTEM, TRUE);
+	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__ENABLE_VIRTUAL_REGISTRY, TRUE);
+	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__INHERIT_OPTIONS, TRUE);
+	//BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__RECREATE_VIRTUAL_FILE_AS_VIRTUAL, TRUE);
+
+	/*
 	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CLASSES_ROOT,		"HKEY_CURRENT_USER\\VirtualGameSandbox\\x86\\CR\\", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
 	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_USER,		"HKEY_CURRENT_USER\\VirtualGameSandbox\\x86\\CU\\", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
 	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE,		"HKEY_CURRENT_USER\\VirtualGameSandbox\\x86\\LM\\", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
@@ -403,6 +415,23 @@ int RunThisProgram()
 	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE,		"HKEY_CURRENT_USER\\VirtualGameSandbox\\x64\\LM\\", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
 	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_USERS,				"HKEY_CURRENT_USER\\VirtualGameSandbox\\x64\\US\\", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
 	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_CONFIG,	"HKEY_CURRENT_USER\\VirtualGameSandbox\\x64\\CC\\", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
+	*/
+
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CLASSES_ROOT,		"", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_USER,		"", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Wow6432Node\\Electronic Arts", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Wow6432Node\\Electronic Arts", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Wow6432Node\\Electronic Arts", NULL, BxIsolationMode_WriteCopy);
+
+
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_USERS,				"", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_CONFIG,	"", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
+
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CLASSES_ROOT,		"", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_USER,		"", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE,		"", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_USERS,				"", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_CONFIG,	"", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
 
 	SetEnvironmentVariable("LOGONSERVER", "\\\\User");
 	SetEnvironmentVariable("USERDOMAIN", "User");
@@ -411,7 +440,6 @@ int RunThisProgram()
 	SetEnvironmentVariable("USERNAME", "User");
 	SetEnvironmentVariable("HOMEPATH", "\\User");
 
-	std::string MountLetter = Config.MountPoint.substr(0, 1);
 
 	PerformRedirectionEnv("USERPROFILE", (MountLetter + ":\\User").c_str());
 	PerformRedirectionEnv("PUBLIC", (MountLetter + ":\\User").c_str());
