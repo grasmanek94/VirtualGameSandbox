@@ -58,6 +58,9 @@
     <Filter Include="Registry">
       <UniqueIdentifier>{50893317-9445-4818-bb79-6a31556ea3b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BoxedAppSDK">
+      <UniqueIdentifier>{6e0a155d-efdc-47fa-b09b-58caec498023}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Registry\RegKeyIterator.hpp">
@@ -85,5 +88,30 @@
       <Filter>Registry</Filter>
     </ClInclude>
     <ClInclude Include="config.hpp" />
+    <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK_InterfacesID.h">
+      <Filter>BoxedAppSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK.h">
+      <Filter>BoxedAppSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK_Interfaces.h">
+      <Filter>BoxedAppSDK</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\BoxedAppSDK\BoxedAppGuide_en.pdf">
+      <Filter>BoxedAppSDK</Filter>
+    </None>
+    <None Include="..\BoxedAppSDK\BoxedAppSDK.chm">
+      <Filter>BoxedAppSDK</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\BoxedAppSDK\bxsdk32.lib">
+      <Filter>BoxedAppSDK</Filter>
+    </Library>
+    <Library Include="..\BoxedAppSDK\bxsdk64.lib">
+      <Filter>BoxedAppSDK</Filter>
+    </Library>
   </ItemGroup>
 </Project>

@@ -1,4 +1,10 @@
 #include <config.hpp>
+#include <boost/algorithm/string.hpp>
+#include <BoxedAppSDK.h>
+#include <Shlobj.h>
+
+#pragma comment(lib, "bxsdk32.lib")
+#pragma comment(lib, "Shell32.lib")
 
 std::wstring s2ws(const std::string& str)
 {
@@ -137,20 +143,6 @@ BOOL EnableDebugPrivilege()
 
 #pragma warning(disable: 4996)
 
-BOOL Is64BitWindows()
-{
-#if defined(_WIN64)
-	return TRUE;  // 64-bit programs run only on Win64
-#elif defined(_WIN32)
-	// 32-bit programs run on both 32-bit and 64-bit Windows
-	// so must sniff
-	BOOL f64 = FALSE;
-	return IsWow64Process(GetCurrentProcess(), &f64) && f64;
-#else
-	return FALSE; // Win64 does not support Win16
-#endif
-}
-
 BOOL FileExists(LPCSTR szPath)
 {
 	DWORD dwAttrib = GetFileAttributesA(szPath);
@@ -247,6 +239,15 @@ BOOL disk_offline(HANDLE h_file, bool enable){
 	return b_offline;
 }
 
+void PerformRedirectionEnv(const char* source, const char* dest)
+{
+	char * current = getenv(source);
+
+	std::cout << "Redirecting<" << std::string(current) << ">=<" << std::string(dest) << ">" << std::endl;
+	SetEnvironmentVariableA(source, dest);
+	BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_WriteCopy, current, dest);
+}
+
 int RunThisProgram()
 {
 	std::cout << "GameLauncher by Rafal 'Gamer_Z' Grasman" << std::endl;
@@ -304,7 +305,6 @@ int RunThisProgram()
 		std::string PhysicalPath = (ws2s(std::wstring(physicalDriveName)));
 		PhysicalPath.erase(PhysicalPath.begin(), PhysicalPath.begin() + strlen("\\\\.\\PhysicalDrive"));
 		std::cout << "Drive : " << PhysicalPath << std::endl;
-		//std::cout << ShellExecute(NULL, "open", "cmd", ("/c \"powershell - Command initialize - disk " + PhysicalPath + "\"").c_str(), "", 0) << std::endl;
 		{
 			DWORD dwFlags = CREATE_SUSPENDED | INHERIT_PARENT_AFFINITY;
 			STARTUPINFO si;
@@ -313,8 +313,9 @@ int RunThisProgram()
 			SecureZeroMemory(&si, sizeof(STARTUPINFO));
 			si.cb = sizeof(STARTUPINFO);
 
+			std::string sysDir(getenv("SystemRoot"));
 			std::cout << "Starting mount..." << std::flush;
-			fSuccess = CreateProcess((Config.GetEnvironmentString("SystemRoot") + "\\system32\\WindowsPowerShell\\v1.0\\powershell.exe").c_str(), (LPSTR)(("\"" + Config.GetEnvironmentString("SystemRoot") + "\\system32\\WindowsPowerShell\\v1.0\\powershell.exe\" ") + "-Command \"initialize-disk " + PhysicalPath + " *>$null\"").c_str(), NULL, NULL, TRUE, dwFlags, NULL, /*(Config.GetEnvironmentString("HOMEDRIVE") + Config.GetEnvironmentString("HOMEPATH")).c_str()*/NULL, &si, &pi);
+			fSuccess = CreateProcess((sysDir + "\\system32\\WindowsPowerShell\\v1.0\\powershell.exe").c_str(), (LPSTR)(("\"" + sysDir + "\\system32\\WindowsPowerShell\\v1.0\\powershell.exe\" ") + "-Command \"initialize-disk " + PhysicalPath + " *>$null\"").c_str(), NULL, NULL, TRUE, dwFlags, NULL, NULL, &si, &pi);
 			if (!fSuccess)
 			{
 				DWORD error = GetLastError();
@@ -385,6 +386,46 @@ int RunThisProgram()
 		}
 	}
 
+	std::cout << "Updating environment to configured variables...\r\n" << std::flush;
+
+	BoxedAppSDK_Init();
+	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__EMBED_BOXEDAPP_IN_CHILD_PROCESSES, TRUE);
+	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__INHERIT_OPTIONS, TRUE);
+
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CLASSES_ROOT,		"HKEY_CURRENT_USER\\VirtualGameSandbox\\CR\\", STANDARD_RIGHTS_ALL | SPECIFIC_RIGHTS_ALL /*| ACCESS_SYSTEM_SECURITY*/, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_USER,		"HKEY_CURRENT_USER\\VirtualGameSandbox\\CU\\", STANDARD_RIGHTS_ALL | SPECIFIC_RIGHTS_ALL /*| ACCESS_SYSTEM_SECURITY*/, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE,		"HKEY_CURRENT_USER\\VirtualGameSandbox\\LM\\", STANDARD_RIGHTS_ALL | SPECIFIC_RIGHTS_ALL /*| ACCESS_SYSTEM_SECURITY*/, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_USERS,				"HKEY_CURRENT_USER\\VirtualGameSandbox\\US\\", STANDARD_RIGHTS_ALL | SPECIFIC_RIGHTS_ALL /*| ACCESS_SYSTEM_SECURITY*/, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_CONFIG,	"HKEY_CURRENT_USER\\VirtualGameSandbox\\CC\\", STANDARD_RIGHTS_ALL | SPECIFIC_RIGHTS_ALL /*| ACCESS_SYSTEM_SECURITY*/, BxIsolationMode_WriteCopy);
+
+	SetEnvironmentVariable("LOGONSERVER", "\\\\User");
+	SetEnvironmentVariable("USERDOMAIN", "User");
+	SetEnvironmentVariable("USERDOMAIN_ROAMINGPROFILE", "User");
+	SetEnvironmentVariable("COMPUTERNAME", "User");
+	SetEnvironmentVariable("USERNAME", "User");
+	SetEnvironmentVariable("HOMEPATH", "\\User");
+
+	std::string MountLetter = Config.MountPoint.substr(0, 1);
+
+	PerformRedirectionEnv("USERPROFILE", (MountLetter + ":\\User").c_str());
+	PerformRedirectionEnv("PUBLIC", (MountLetter + ":\\User").c_str());
+	PerformRedirectionEnv("APPDATA", (MountLetter + ":\\User\\AppData").c_str());
+	PerformRedirectionEnv("LOCALAPPDATA", (MountLetter + ":\\User\\AppData\\Local").c_str());
+	PerformRedirectionEnv("ALLUSERSPROFILE", (MountLetter + ":\\User\\ProgramData").c_str());
+	PerformRedirectionEnv("ProgramData", (MountLetter + ":\\User\\ProgramData").c_str());
+	PerformRedirectionEnv("ProgramFiles", (MountLetter + ":\\User\\ProgramFiles\\x64").c_str());
+	PerformRedirectionEnv("ProgramFiles(x86)", (MountLetter + ":\\User\\ProgramFiles\\x86").c_str());
+	PerformRedirectionEnv("ProgramW6432", (MountLetter + ":\\User\\ProgramFiles\\x64").c_str());
+	PerformRedirectionEnv("CommonProgramFiles", (MountLetter + ":\\User\\ProgramFiles\\Common\\x64").c_str());
+	PerformRedirectionEnv("CommonProgramFiles(x86)", (MountLetter + ":\\User\\ProgramFiles\\Common\\x86").c_str());
+	PerformRedirectionEnv("CommonProgramW6432", (MountLetter + ":\\User\\ProgramFiles\\Common\\x64").c_str());
+	//PerformRedirectionEnv("SystemRoot", (MountLetter + ":\\User\\Windows").c_str());
+	//PerformRedirectionEnv("windir", (MountLetter + ":\\User\\Windows").c_str());
+	//PerformRedirectionEnv("SystemDrive", (MountLetter + ":").c_str());
+	//PerformRedirectionEnv("HOMEDRIVE", (MountLetter + ":").c_str());
+
+	std::cout << "OK" << std::endl;
+
 	if (FileExists(Config.Exec_Script.c_str()))
 	{
 		std::cout << "Executing setup script..." << std::endl;
@@ -401,20 +442,6 @@ int RunThisProgram()
 	{
 		std::cout << "No script available, continuing" << std::endl;
 	}
-
-
-	std::cout << "Updating environment to configured variables..." << std::flush;
-	auto child = Config.pt.get_child_optional("EnvironmentVariables");
-	if (child.is_initialized())
-	{
-		auto initialized_child = child.get();
-		for (auto it : initialized_child)
-		{
-			SetEnvironmentVariable(it.first.c_str(), it.second.data().c_str());
-		}
-	}
-
-	std::cout << "OK" << std::endl;
 
 	if (Config.ApplicationAutoLaunch.size() <= 2)
 	{
