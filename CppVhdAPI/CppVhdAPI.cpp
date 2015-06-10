@@ -564,10 +564,10 @@ int RunThisProgram()
 			si.cb = sizeof(STARTUPINFO);
 
 			std::cout << "Starting process..." << std::flush;
-			fSuccess = CreateProcess(Config.ApplicationProcess.c_str(), (LPSTR)("\"" + Config.ApplicationProcess + "\" " + Config.ApplicationParameters).c_str(), NULL, NULL, TRUE, dwFlags, NULL, Config.ApplicationWorkingDir.c_str(), &si, &pi);
+			fSuccess = CreateProcess((MountPoint + Config.ApplicationProcess).c_str(), (LPSTR)("\"" + (MountPoint + Config.ApplicationProcess) + "\" " + Config.ApplicationParameters).c_str(), NULL, NULL, TRUE, dwFlags, NULL, (MountPoint + Config.ApplicationWorkingDir).c_str(), &si, &pi);
 			if (!fSuccess)
 			{
-				std::cout << "Unable to launch process " << Config.ApplicationProcess.c_str() << " (" << GetLastError() << ")" << std::endl;
+				std::cout << "Unable to launch process " << (MountPoint + Config.ApplicationProcess).c_str() << " (" << GetLastError() << ")" << std::endl;
 				return (int)pressanykey("Hit any key to quit the application\r\n");
 			}
 			ResumeThread(pi.hThread);
@@ -581,14 +581,14 @@ int RunThisProgram()
 			{
 				std::cout << "Trying shellexecute..." << std::flush;
 				CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-				hInstance = ShellExecute(NULL, "open", Config.ApplicationProcess.c_str(), (LPSTR)Config.ApplicationParameters.c_str(), Config.ApplicationWorkingDir.c_str(), SW_SHOWNORMAL);
+				hInstance = ShellExecute(NULL, "open", (MountPoint + Config.ApplicationProcess).c_str(), (LPSTR)Config.ApplicationParameters.c_str(), (MountPoint + Config.ApplicationWorkingDir).c_str(), SW_SHOWNORMAL);
 				if (hInstance > (HANDLE)32)
 				{
 					std::cout << "OK" << std::endl;
 				}
 				else
 				{
-					std::cout << "Unable to launch process " << Config.ApplicationProcess.c_str() << " (" << GetLastError() << ")" << std::endl;
+					std::cout << "Unable to launch process " << (MountPoint + Config.ApplicationProcess).c_str() << " (" << GetLastError() << ")" << std::endl;
 					return (int)pressanykey("Hit any key to quit the application\r\n");
 				}
 			}
