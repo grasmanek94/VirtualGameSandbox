@@ -245,3 +245,4 @@ FakesAssemblies/
 
 *.dll
 Release/example.vhd
+Release/example.vhd

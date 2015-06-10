@@ -101,6 +101,8 @@
     <ClCompile Include="..\angelscriptsdk\add_on\scriptstdstring\scriptstdstring.cpp" />
     <ClCompile Include="..\angelscriptsdk\add_on\scriptstdstring\scriptstdstring_utils.cpp" />
     <ClCompile Include="CppVhdAPI.cpp" />
+    <ClCompile Include="Ini.cpp" />
+    <ClCompile Include="Ini\ConvertUTF.c" />
     <ClCompile Include="Registry.cpp" />
     <ClCompile Include="Registry\RegistryKey.cpp" />
     <ClCompile Include="Registry\RegKeyIterator.cpp" />
@@ -113,6 +115,8 @@
     <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK_Interfaces.h" />
     <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK_InterfacesID.h" />
     <ClInclude Include="config.hpp" />
+    <ClInclude Include="Ini\ConvertUTF.h" />
+    <ClInclude Include="Ini\SimpleIni.h" />
     <ClInclude Include="Registry\CountedRegKey.hpp" />
     <ClInclude Include="Registry\ExpandableBuffer.hpp" />
     <ClInclude Include="Registry\ReferenceCounted.hpp" />

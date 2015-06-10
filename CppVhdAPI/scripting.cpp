@@ -115,6 +115,7 @@ void TryScriptingShit()
 }
 
 int ConfigureRegistryForScriptEngine(asIScriptEngine *engine);
+int ConfigureIniForScriptEngine(asIScriptEngine *engine);
 // This function will register the application interface
 int ConfigureEngine(asIScriptEngine *engine)
 {
@@ -131,6 +132,7 @@ int ConfigureEngine(asIScriptEngine *engine)
 	r = engine->RegisterGlobalFunction("string GetConfig(const string &in)", asFUNCTION(GetConfig), asCALL_CDECL); assert(r >= 0);
 	
 	ConfigureRegistryForScriptEngine(engine);
+	ConfigureIniForScriptEngine(engine);
 	// TODO: There should be an option of outputting the engine 
 	//       configuration for use with the offline compiler asbuild.
 	//       It should then be possible to execute pre-compiled bytecode.

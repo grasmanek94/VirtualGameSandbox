@@ -248,6 +248,8 @@ void PerformRedirectionEnv(const char* source, const char* dest)
 	BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_WriteCopy, current, dest);
 }
 
+char location[] = "D:\\System\\TEMP\\_BOXEDAPP\\reg.dat";
+
 int RunThisProgram()
 {
 	std::cout << "GameLauncher by Rafal 'Gamer_Z' Grasman" << std::endl;
@@ -392,15 +394,17 @@ int RunThisProgram()
 
 	BoxedAppSDK_Init();
 
-	//BoxedAppSDK_SetLogFileW(L"boxedapp.log");
-	//BoxedAppSDK_EnableDebugLog(TRUE);
-
-	//BoxedAppSDK_SetPersistentRegistryPathA("reg.dat");
-
 	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__EMBED_BOXEDAPP_IN_CHILD_PROCESSES, TRUE);
 	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__ENABLE_VIRTUAL_FILE_SYSTEM, TRUE);
 	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__ENABLE_VIRTUAL_REGISTRY, TRUE);
 	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__INHERIT_OPTIONS, TRUE);
+
+	BoxedAppSDK_SetLogFileW(L"boxedapp.log");
+
+	BoxedAppSDK_EnableDebugLog(TRUE);
+
+	BoxedAppSDK_SetPersistentRegistryPathA(location);
+
 	//BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__RECREATE_VIRTUAL_FILE_AS_VIRTUAL, TRUE);
 
 	/*
@@ -419,10 +423,14 @@ int RunThisProgram()
 
 	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CLASSES_ROOT,		"", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
 	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_USER,		"", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
-	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Wow6432Node\\Electronic Arts", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
-	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Wow6432Node\\Electronic Arts", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
-	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Wow6432Node\\Electronic Arts", NULL, BxIsolationMode_WriteCopy);
 
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Wow6432Node\\Electronic Arts", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Wow6432Node\\Electronic Arts", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Wow6432Node\\Electronic Arts", NULL, BxIsolationMode_WriteCopy);
+
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Electronic Arts", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Electronic Arts", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
+	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Electronic Arts", NULL, BxIsolationMode_WriteCopy);
 
 	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_USERS,				"", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
 	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_CONFIG,	"", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);

@@ -47,6 +47,12 @@
     <ClCompile Include="Registry.cpp">
       <Filter>angelscript</Filter>
     </ClCompile>
+    <ClCompile Include="Ini\ConvertUTF.c">
+      <Filter>ini</Filter>
+    </ClCompile>
+    <ClCompile Include="Ini.cpp">
+      <Filter>angelscript</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="angelscript">
@@ -60,6 +66,9 @@
     </Filter>
     <Filter Include="BoxedAppSDK">
       <UniqueIdentifier>{6e0a155d-efdc-47fa-b09b-58caec498023}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ini">
+      <UniqueIdentifier>{3ebcc332-5346-4d43-b4b8-dd1f88ec8a0b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -96,6 +105,12 @@
     </ClInclude>
     <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK_Interfaces.h">
       <Filter>BoxedAppSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Ini\ConvertUTF.h">
+      <Filter>ini</Filter>
+    </ClInclude>
+    <ClInclude Include="Ini\SimpleIni.h">
+      <Filter>ini</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
