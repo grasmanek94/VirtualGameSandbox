@@ -29,10 +29,6 @@ void CheckConfig();
 struct _Config
 {
 	std::string VHD_location;
-	std::string MountPoint;
-	std::string ISO_location;
-	std::string Exec_Script;
-	std::string VolumeNameToMount;
 	std::string UseShellExecute;
 
 	std::string ApplicationProcess;
@@ -48,14 +44,10 @@ struct _Config
 	{
 		//default config
 		VHD_location = ".\\game.vhd";
-		ISO_location = "Y:\\file.iso";
-		MountPoint = "Y:\\";
-		Exec_Script = "Y:\\configuration.cxx";
-		VolumeNameToMount = "VirtualGameSandbox";
 		UseShellExecute = "false";
 
-		ApplicationProcess = "Y:\\Game\\game.exe";
-		ApplicationWorkingDir = "Y:\\Game\\";
+		ApplicationProcess = "Game\\game.exe";
+		ApplicationWorkingDir = "Game\\";
 		ApplicationParameters = "-debug -sv_cheats \"1\"";
 		ApplicationAutoLaunch = "yes";
 
@@ -74,11 +66,6 @@ struct _Config
 		boost::property_tree::json_parser::read_json(".\\config.cfg", pt);
 
 		CONFIG_SET(std::string, "VHD.Location", VHD_location);
-		CONFIG_SET(std::string, "VHD.MountPoint", MountPoint);
-		CONFIG_SET(std::string, "VHD.IsoToMountAfterVHD", ISO_location);
-		CONFIG_SET(std::string, "VHD.VolumeName", VolumeNameToMount);
-
-		CONFIG_SET(std::string, "Automation.Script", Exec_Script);
 
 		CONFIG_SET(std::string, "Application.Process", ApplicationProcess);
 		CONFIG_SET(std::string, "Application.WorkingDirectory", ApplicationWorkingDir);

@@ -177,7 +177,7 @@ BOOL IsProcessRunning(DWORD pid)
 	return (ret == WAIT_TIMEOUT);
 }
 
-void TryScriptingShit();
+void TryScriptingShit(const std::string& script);
 
 void PrintSqs(int count)
 {
@@ -193,7 +193,7 @@ _Config Config;
 HANDLE  isohandle;
 HANDLE  handle;
 
-std::wstring GetVolumeByName(std::wstring name)
+std::wstring GetFirstVolumeByName(int physicalDriveNumber)
 {
 	wchar_t volumeNameBuffer[MAX_PATH];
 	wchar_t volumeName2Buffer[MAX_PATH];
@@ -204,13 +204,44 @@ std::wstring GetVolumeByName(std::wstring name)
 		do
 		{
 			GetVolumeInformationW(volumeNameBuffer,volumeName2Buffer,ARRAY_SIZE(volumeName2Buffer),0,0,0,0,0);
+
 			std::wstring VolumeName = volumeName2Buffer;
 			std::wstring VolumeGUID = volumeNameBuffer;
-			if (!VolumeName.compare(name))
+
+			VOLUME_DISK_EXTENTS extends;
+			SecureZeroMemory(&extends, sizeof(extends));
+			DWORD bytesReturned = 0;
+			OVERLAPPED overlapped;
+			SecureZeroMemory(&overlapped, sizeof(overlapped));
+
+			std::wstring forCreateFile(VolumeGUID);
+			if (forCreateFile[forCreateFile.length() - 1] == L'\\')
 			{
-				FindVolumeClose(search);
-				return VolumeGUID;
+				forCreateFile = forCreateFile.erase(forCreateFile.length() - 1);
 			}
+			HANDLE device = CreateFileW(forCreateFile.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+			int error = GetLastError();
+			if (device != INVALID_HANDLE_VALUE && !error)
+			{
+				if (DeviceIoControl((HANDLE)device,			// handle to device
+					IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS,	// dwIoControlCode
+					NULL,									// lpInBuffer
+					0,										// nInBufferSize
+					(LPVOID)&extends,						// output buffer
+					(DWORD)sizeof(extends),					// size of output buffer
+					(LPDWORD)&bytesReturned,				// number of bytes returned
+					(LPOVERLAPPED)&overlapped				// OVERLAPPED structure
+					))
+				{
+					if (extends.Extents[0].DiskNumber == physicalDriveNumber)
+					{
+						CloseHandle(device);
+						FindVolumeClose(search);
+						return VolumeGUID;
+					}
+				}
+				CloseHandle(device);
+			}			
 		} while (FindNextVolumeW(search, volumeNameBuffer, ARRAY_SIZE(volumeNameBuffer)) != FALSE);
 		FindVolumeClose(search);
 		return L"";
@@ -223,7 +254,8 @@ std::wstring GetVolumeByName(std::wstring name)
 //
 #define _SafeRelease(x) {if (NULL != x) { x->Release(); x = NULL; } }
 
-BOOL disk_offline(HANDLE h_file, bool enable){
+BOOL disk_offline(HANDLE h_file, bool enable)
+{
 	DWORD bytes_returned = 0;
 	BOOL b_offline = 0;
 	if (h_file != INVALID_HANDLE_VALUE){
@@ -249,6 +281,7 @@ void PerformRedirectionEnv(const char* source, const char* dest)
 }
 
 char location[] = "D:\\System\\TEMP\\_BOXEDAPP\\reg.dat";
+std::string MountPoint(" :\\");
 
 int RunThisProgram()
 {
@@ -267,12 +300,26 @@ int RunThisProgram()
 	std::cout << "OK" << std::endl;
 
 	std::cout << "Checking for free mountpoint..." << std::flush;
-	if (GetDriveTypeA(Config.MountPoint.c_str()) != 1 && GetDriveTypeA(Config.MountPoint.c_str()) != 0)
+
+	char p = 'Z';
+	bool availablemountpoint = false;
+	for (; p >= 'A'; --p)
 	{
-		std::cout << Config.MountPoint << " already exists? Cannot use drive letter as mount point." << std::endl;
+		MountPoint[0] = p;
+		if (!(GetDriveTypeA(MountPoint.c_str()) != 1 && GetDriveTypeA(MountPoint.c_str()) != 0))
+		{
+			availablemountpoint = true;
+			break;
+		}
+	}
+
+	if (availablemountpoint == false)
+	{
+		std::cout << " No available mountpoints. " << std::endl;
 		return (int)pressanykey("Hit any key to quit the application\r\n");
 	}
-	std::cout << "OK" << std::endl;
+
+	std::cout << " Using ('" << MountPoint << "')... OK" << std::endl;
 
 	std::cout << "Opening Game Disk..." << std::flush;
 
@@ -303,8 +350,8 @@ int RunThisProgram()
 	std::cout << "OK" << std::endl;
 
 	std::cout << "Onlineing VDISK..." << std::flush;
-	{
-		std::string PhysicalPath = (ws2s(std::wstring(physicalDriveName)));
+	std::string PhysicalPath = (ws2s(std::wstring(physicalDriveName)));
+	{		
 		PhysicalPath.erase(PhysicalPath.begin(), PhysicalPath.begin() + strlen("\\\\.\\PhysicalDrive"));
 		std::cout << "Drive : " << PhysicalPath << std::endl;
 		{
@@ -333,14 +380,15 @@ int RunThisProgram()
 
 	std::cout << "Configuring volume information..." << std::flush;
 
-	std::wstring volumeName = GetVolumeByName(s2ws(Config.VolumeNameToMount));
-	if (volumeName.size() == 0)
+	int physicalDriveNumber = std::atoi(PhysicalPath.c_str());
+	std::wstring volumeName = GetFirstVolumeByName(physicalDriveNumber);
+	if (volumeName.size() <= 0 || volumeName.size() > 256)
 	{
 		int i = 0;
-		while (++i < 10)
+		while (++i < 40)
 		{
-			volumeName = GetVolumeByName(s2ws(Config.VolumeNameToMount));
-			if (volumeName.size() <= 6)
+			volumeName = GetFirstVolumeByName(physicalDriveNumber);
+			if (volumeName.size() <= 0 || volumeName.size() > 256)
 			{
 				Sleep(25);
 			}
@@ -351,33 +399,36 @@ int RunThisProgram()
 		}
 	}
 
-	if (volumeName.size() <= 6)
+	if (volumeName.size() <= 0 || volumeName.size() > 256)
 	{
-		std::wcout << "Unable to locate a volume on this device" << std::endl;
+		std::wcout << "Unable to locate a volume ('" << volumeName << "') on this VHD" << std::endl;
 		return (int)pressanykey("Hit any key to quit the application\r\n");
 	}
 	std::cout << "OK" << std::endl;
 	
 	std::cout << "Mounting to configured mountpoint..." << std::flush;
-	if (!SetVolumeMountPointW(s2ws(Config.MountPoint).c_str(), volumeName.c_str()))
+	if (!SetVolumeMountPointW(s2ws(MountPoint).c_str(), volumeName.c_str()))
 	{
-		std::cout << "Unable to mount VHD to " << Config.MountPoint << " (" << GetLastError() << ")" << std::endl;
+		std::cout << "Unable to mount VHD to " << MountPoint << " (" << GetLastError() << ")" << std::endl;
 		return (int)pressanykey("Hit any key to quit the application\r\n");
 	}
 
-	UINT dtype = GetDriveTypeA(Config.MountPoint.c_str());
+	UINT dtype = GetDriveTypeA(MountPoint.c_str());
 	while (dtype == 1 || dtype == 0)
 	{
-		dtype = GetDriveTypeA(Config.MountPoint.c_str());
+		dtype = GetDriveTypeA(MountPoint.c_str());
 		Sleep(10);
 	}
 	std::cout << "OK" << std::endl;
 
-	
-	if (FileExists(Config.ISO_location.c_str()))
+	std::string MountLetter = MountPoint.substr(0, 1);
+
+	std::string ISO_location(MountLetter + ":\\mount.iso");
+
+	if (FileExists(ISO_location.c_str()))
 	{
 		std::cout << "Mounting ISO... " << std::flush;
-		if (AttachVirtualDiskEx(s2ws(Config.ISO_location).c_str(), isohandle) == ERROR_SUCCESS)
+		if (AttachVirtualDiskEx(s2ws(ISO_location).c_str(), isohandle) == ERROR_SUCCESS)
 		{
 			std::cout << "ISO mounted.\r\n";
 		}
@@ -390,8 +441,6 @@ int RunThisProgram()
 
 	std::cout << "Updating environment to configured variables...\r\n" << std::flush;
 
-	std::string MountLetter = Config.MountPoint.substr(0, 1);
-
 	BoxedAppSDK_Init();
 
 	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__EMBED_BOXEDAPP_IN_CHILD_PROCESSES, TRUE);
@@ -399,11 +448,11 @@ int RunThisProgram()
 	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__ENABLE_VIRTUAL_REGISTRY, TRUE);
 	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__INHERIT_OPTIONS, TRUE);
 
-	BoxedAppSDK_SetLogFileW(L"boxedapp.log");
+	//BoxedAppSDK_SetLogFileW(L"boxedapp.log");
 
-	BoxedAppSDK_EnableDebugLog(TRUE);
+	//BoxedAppSDK_EnableDebugLog(TRUE);
 
-	BoxedAppSDK_SetPersistentRegistryPathA(location);
+	//BoxedAppSDK_SetPersistentRegistryPathA(location);
 
 	//BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__RECREATE_VIRTUAL_FILE_AS_VIRTUAL, TRUE);
 
@@ -424,13 +473,13 @@ int RunThisProgram()
 	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CLASSES_ROOT,		"", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
 	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_USER,		"", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
 
-	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Wow6432Node\\Electronic Arts", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
-	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Wow6432Node\\Electronic Arts", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
-	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Wow6432Node\\Electronic Arts", NULL, BxIsolationMode_WriteCopy);
-
-	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Electronic Arts", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
-	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Electronic Arts", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
-	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Electronic Arts", NULL, BxIsolationMode_WriteCopy);
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Wow6432Node\\Electronic Arts", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Wow6432Node\\Electronic Arts", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Wow6432Node\\Electronic Arts", NULL, BxIsolationMode_WriteCopy);
+	//
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Electronic Arts", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Electronic Arts", KEY_WOW64_64KEY, BxIsolationMode_WriteCopy);
+	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Electronic Arts", NULL, BxIsolationMode_WriteCopy);
 
 	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_USERS,				"", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
 	//BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_CONFIG,	"", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
@@ -468,14 +517,16 @@ int RunThisProgram()
 
 	std::cout << "OK" << std::endl;
 
-	if (FileExists(Config.Exec_Script.c_str()))
+	std::string Exec_Script(MountLetter + ":\\configuration.cxx");
+
+	if (FileExists(Exec_Script.c_str()))
 	{
 		std::cout << "Executing setup script..." << std::endl;
 		PrintSqs(32); 
 		std::cout << " SCRIPT  OUTPUT "; 
 		PrintSqs(112);
 		std::cout << std::endl;
-		TryScriptingShit(); 
+		TryScriptingShit(Exec_Script);
 		std::cout << std::endl;
 		PrintSqs(160);
 		std::cout << std::endl;

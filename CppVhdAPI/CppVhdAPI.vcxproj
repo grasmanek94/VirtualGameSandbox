@@ -101,6 +101,7 @@
     <ClCompile Include="..\angelscriptsdk\add_on\scriptstdstring\scriptstdstring.cpp" />
     <ClCompile Include="..\angelscriptsdk\add_on\scriptstdstring\scriptstdstring_utils.cpp" />
     <ClCompile Include="CppVhdAPI.cpp" />
+    <ClCompile Include="Directory.cpp" />
     <ClCompile Include="Ini.cpp" />
     <ClCompile Include="Ini\ConvertUTF.c" />
     <ClCompile Include="Registry.cpp" />

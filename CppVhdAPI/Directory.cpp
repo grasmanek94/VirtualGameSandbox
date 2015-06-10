@@ -42,37 +42,30 @@ BOOL FileExists(LPCSTR szPath);
 BOOL IsProcessRunning(DWORD pid);
 
 using namespace std;
-#include <Ini/SimpleIni.h>
 
-bool INI_SET_VALUE_STR(const string& file, const string& section, const string& key, const string& newvalue)
+bool dirExists(const std::string& dirName_in)
 {
-	CSimpleIniA ini;
-	ini.SetUnicode();
+	DWORD ftyp = GetFileAttributesA(dirName_in.c_str());
+	if (ftyp == INVALID_FILE_ATTRIBUTES)
+		return false;  //something is wrong with your path!
 
-	if (ini.LoadFile(file.c_str()) < 0)
-	{
-		return false;
-	}
+	if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
+		return true;   // this is a directory!
 
-	if (ini.SetValue(section.c_str(), key.c_str(), newvalue.c_str()) < 0)
-	{
-		return false;
-	}
+	return false;    // this is not a directory!
+}
 
-	if (ini.SaveFile(file.c_str(), false) < 0)
-	{
-		return false;
-	}
-
-	return true;
+bool DIRECTORY_EXISTS(const string& dir)
+{
+	return dirExists(dir);
 }
 
 // This function will register the application interface
 #define REGISTER(a,b) r = engine->RegisterGlobalFunction(a, asFUNCTION(b), asCALL_CDECL); assert(r >= 0)
-int ConfigureIniForScriptEngine(asIScriptEngine *engine)
+int ConfigureDirectoryForScriptEngine(asIScriptEngine *engine)
 {
 	int r;
 
-	REGISTER("bool INI_SET_VALUE_STR(const string& in, const string& in, const string& in, const string& in)", INI_SET_VALUE_STR);
+	REGISTER("bool DIRECTORY_EXISTS(const string& in)", DIRECTORY_EXISTS);
 	return 0;
 }

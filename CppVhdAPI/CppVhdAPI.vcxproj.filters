@@ -53,6 +53,9 @@
     <ClCompile Include="Ini.cpp">
       <Filter>angelscript</Filter>
     </ClCompile>
+    <ClCompile Include="Directory.cpp">
+      <Filter>angelscript</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="angelscript">

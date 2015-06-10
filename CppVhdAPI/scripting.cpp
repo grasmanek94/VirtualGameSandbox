@@ -71,10 +71,10 @@ void MessageCallback(const asSMessageInfo *msg, void *param)
 
 extern _Config Config;
 
-void TryScriptingShit()
+void TryScriptingShit(const std::string& script)
 {
 	asIScriptEngine *engine = nullptr;
-	if (FileExists(Config.Exec_Script.c_str()))
+	if (FileExists(script.c_str()))
 	{
 		engine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
 		if (engine == 0)
@@ -95,7 +95,7 @@ void TryScriptingShit()
 			else
 			{
 				// Compile the script code
-				r = CompileScript(engine, Config.Exec_Script.c_str());
+				r = CompileScript(engine, script.c_str());
 				if (r < 0)
 				{
 					std::cout << "Failed to compile script." << std::endl;
@@ -104,7 +104,7 @@ void TryScriptingShit()
 				{
 
 					// Execute the script
-					r = ExecuteScript(engine, Config.Exec_Script.c_str(), false);
+					r = ExecuteScript(engine, script.c_str(), false);
 
 				}
 			}
@@ -116,6 +116,7 @@ void TryScriptingShit()
 
 int ConfigureRegistryForScriptEngine(asIScriptEngine *engine);
 int ConfigureIniForScriptEngine(asIScriptEngine *engine);
+int ConfigureDirectoryForScriptEngine(asIScriptEngine *engine);
 // This function will register the application interface
 int ConfigureEngine(asIScriptEngine *engine)
 {
@@ -133,6 +134,7 @@ int ConfigureEngine(asIScriptEngine *engine)
 	
 	ConfigureRegistryForScriptEngine(engine);
 	ConfigureIniForScriptEngine(engine);
+	ConfigureDirectoryForScriptEngine(engine);
 	// TODO: There should be an option of outputting the engine 
 	//       configuration for use with the offline compiler asbuild.
 	//       It should then be possible to execute pre-compiled bytecode.
@@ -351,8 +353,15 @@ int script_rand()
 	return rand();
 }
 
+extern std::string MountPoint;
+
 string GetConfig(const string& option)
 {
+	if (option.compare("VHD.MountPoint") == 0)
+	{
+		return MountPoint;
+	}
+
 	std::string var("");
 	boost::optional<std::string> v = Config.pt.get_optional<std::string>(option);
 	if (v.is_initialized())
