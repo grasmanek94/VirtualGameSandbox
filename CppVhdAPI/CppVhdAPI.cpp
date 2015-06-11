@@ -801,9 +801,9 @@ int RunThisProgram()
 	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__ENABLE_VIRTUAL_REGISTRY, TRUE);
 	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__INHERIT_OPTIONS, TRUE);
 
-	BoxedAppSDK_SetLogFileW(L"boxedapp.log");
+	//BoxedAppSDK_SetLogFileW(L"boxedapp.log");
 
-	BoxedAppSDK_EnableDebugLog(TRUE);
+	//BoxedAppSDK_EnableDebugLog(TRUE);
 
 	std::cout << "OK\r\n" << std::flush;
 	std::cout << "Updating environment to configured variables...\r\n" << std::flush;
