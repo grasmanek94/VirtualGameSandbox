@@ -8,6 +8,7 @@
 #include "cleanup.hxx"
 #include "randomization.hxx"
 #include "process_helper.hxx"
+#include "virtualization_helper.hxx"
 #include "config.hxx"
 
 void ShowHello()
@@ -64,6 +65,8 @@ int RunThisProgram()
 	}
 
 	MountISO();
+
+	ConfigureBoxedAppSDK();
 
 	PerformScriptExecution();
 
