@@ -62,6 +62,14 @@ bool DIRECTORY_EXISTS(const string& dir)
 	return dirExists(MountPoint + dir);
 }
 
+bool IO_MOVE(const string& dir, const string& newdir)
+{
+	std::string resultdir = MountPoint + dir;
+	std::string resultnewdir = MountPoint + newdir;
+
+	return MoveFileA(resultdir.c_str(), resultnewdir.c_str()) != 0;
+}
+
 // This function will register the application interface
 #define REGISTER(a,b) r = engine->RegisterGlobalFunction(a, asFUNCTION(b), asCALL_CDECL); assert(r >= 0)
 int ConfigureDirectoryForScriptEngine(asIScriptEngine *engine)
@@ -69,5 +77,6 @@ int ConfigureDirectoryForScriptEngine(asIScriptEngine *engine)
 	int r;
 
 	REGISTER("bool DIRECTORY_EXISTS(const string& in)", DIRECTORY_EXISTS);
+	REGISTER("bool MOVE(const string& in, const string& in)", IO_MOVE);
 	return 0;
 }
