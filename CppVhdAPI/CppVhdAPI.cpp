@@ -847,6 +847,9 @@ int RunThisProgram()
 	BoxedAppDLLChecks();
 
 	std::cout << "OK\r\n" << std::flush;
+
+//#define REGEMU
+#ifdef REGEMU
 	std::cout << "Setting BoxedAppSDK Registry Path..." << std::flush;
 
 	BoxedAppSDK_SetPersistentRegistryPathW(
@@ -855,6 +858,8 @@ int RunThisProgram()
 		);
 
 	std::cout << "OK\r\n" << std::flush;
+#endif
+
 	std::cout << "Initialising BoxedAppSDK..." << std::flush;
 
 	BoxedAppSDK_Init();
@@ -863,17 +868,20 @@ int RunThisProgram()
 	std::cout << "Setting BoxedAppSDK options..." << std::flush;
 
 	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__EMBED_BOXEDAPP_IN_CHILD_PROCESSES, TRUE);
-	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__ENABLE_VIRTUAL_FILE_SYSTEM, TRUE);
-	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__ENABLE_VIRTUAL_REGISTRY, TRUE);
-	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__INHERIT_OPTIONS, TRUE);
+#ifndef REGEMU
+	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__ENABLE_VIRTUAL_REGISTRY, FALSE);
+#endif
 
-	//BoxedAppSDK_SetLogFileW(L"boxedapp.log");
+#ifdef BXSDK_DEBUG
+	BoxedAppSDK_SetLogFileW(L"boxedapp.log");
 
-	//BoxedAppSDK_EnableDebugLog(TRUE);
+	BoxedAppSDK_EnableDebugLog(TRUE);
+#endif
 
 	std::cout << "OK\r\n" << std::flush;
 	std::cout << "Updating environment to configured variables...\r\n" << std::flush;
 
+#ifdef REGEMU
 	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CLASSES_ROOT,		"", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
 	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CURRENT_USER,		"", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
 	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_LOCAL_MACHINE,		"", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
@@ -918,6 +926,7 @@ int RunThisProgram()
 	if (ERROR_SUCCESS == BoxedAppSDK_CreateVirtualRegKeyW(HKEY_CURRENT_CONFIG, L"", NULL, NULL, REG_OPTION_BACKUP_RESTORE, NULL, NULL, &handle, NULL)) { RegCloseKey(handle); }
 	if (ERROR_SUCCESS == BoxedAppSDK_CreateVirtualRegKeyW(HKEY_CURRENT_CONFIG, L"Software", NULL, NULL, REG_OPTION_BACKUP_RESTORE, NULL, NULL, &handle, NULL)) { RegCloseKey(handle); }
 	if (ERROR_SUCCESS == BoxedAppSDK_CreateVirtualRegKeyW(HKEY_CURRENT_CONFIG, L"System", NULL, NULL, REG_OPTION_BACKUP_RESTORE, NULL, NULL, &handle, NULL)) { RegCloseKey(handle); }
+#endif
 
 	SetEnvironmentVariable("LOGONSERVER", "\\\\User");
 	SetEnvironmentVariable("USERDOMAIN", "User");
@@ -977,11 +986,14 @@ int RunThisProgram()
 	//
 	std::cout << "Preparing process startup..." << std::flush;
 
+#ifdef REGEMU
 	registrydathandle = GetRegistryFileHandle();
 	if (registrydathandle != INVALID_HANDLE_VALUE)
 	{
 		std::cout << "(RegData handle: " << (unsigned long)registrydathandle << ")..." << std::flush;
 	}
+#endif
+
 	bool r = true;
 	while (r)
 	{
@@ -991,42 +1003,20 @@ int RunThisProgram()
 		BOOL fSuccess;
 		std::cout << "OK" << std::endl;
 
-		//if (Config.UseShellExecute.compare("force") != 0)
-		{
-			// Create the child process, specifying a new environment block. 
-			SecureZeroMemory(&si, sizeof(STARTUPINFO));
-			si.cb = sizeof(STARTUPINFO);
+		// Create the child process, specifying a new environment block. 
+		SecureZeroMemory(&si, sizeof(STARTUPINFO));
+		si.cb = sizeof(STARTUPINFO);
 
-			std::cout << "Starting process..." << std::flush;
-			fSuccess = CreateProcess((MountPoint + Config.ApplicationProcess).c_str(), (LPSTR)("\"" + (MountPoint + Config.ApplicationProcess) + "\" " + Config.ApplicationParameters).c_str(), NULL, NULL, TRUE, dwFlags, NULL, (MountPoint + Config.ApplicationWorkingDir).c_str(), &si, &pi);
-			if (!fSuccess)
-			{
-				std::cout << "Unable to launch process " << (MountPoint + Config.ApplicationProcess).c_str() << " (" << GetLastError() << ")" << std::endl;
-				return (int)pressanykey("Hit any key to quit the application\r\n");
-			}
-			ResumeThread(pi.hThread);
-			std::cout << "OK" << std::endl;
+		std::cout << "Starting process..." << std::flush;
+		fSuccess = CreateProcess((MountPoint + Config.ApplicationProcess).c_str(), (LPSTR)("\"" + (MountPoint + Config.ApplicationProcess) + "\" " + Config.ApplicationParameters).c_str(), NULL, NULL, TRUE, dwFlags, NULL, (MountPoint + Config.ApplicationWorkingDir).c_str(), &si, &pi);
+		if (!fSuccess)
+		{
+			std::cout << "Unable to launch process " << (MountPoint + Config.ApplicationProcess).c_str() << " (" << GetLastError() << ")" << std::endl;
+			return (int)pressanykey("Hit any key to quit the application\r\n");
 		}
-		//else if (!Config.UseShellExecute.compare("true") || !Config.UseShellExecute.compare("force"))
-		//{
-		//	HANDLE hInstance = INVALID_HANDLE_VALUE;
-		//	Sleep(1000);
-		//	if (!IsProcessRunning(pi.dwProcessId))
-		//	{
-		//		std::cout << "Trying shellexecute..." << std::flush;
-		//		CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-		//		hInstance = ShellExecute(NULL, "open", (MountPoint + Config.ApplicationProcess).c_str(), (LPSTR)Config.ApplicationParameters.c_str(), (MountPoint + Config.ApplicationWorkingDir).c_str(), SW_SHOWNORMAL);
-		//		if (hInstance > (HANDLE)32)
-		//		{
-		//			std::cout << "OK" << std::endl;
-		//		}
-		//		else
-		//		{
-		//			std::cout << "Unable to launch process " << (MountPoint + Config.ApplicationProcess).c_str() << " (" << GetLastError() << ")" << std::endl;
-		//			return (int)pressanykey("Hit any key to quit the application\r\n");
-		//		}
-		//	}
-		//}
+		ResumeThread(pi.hThread);
+		std::cout << "OK" << std::endl;
+
 
 		int ret = pressanykey("Press any key when done playing to close this window (will detach the Virtual Hard Drive too!)\r\n");
 		r = ret == 'R' || ret == 'r';

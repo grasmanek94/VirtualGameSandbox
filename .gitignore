@@ -250,3 +250,4 @@ Release/example.vhd
 *.vhd
 *.vhd
 Release/example.vhd.registry
+*.registry
