@@ -3,6 +3,9 @@
 #include <BoxedAppSDK.h>
 #include <Shlobj.h>
 
+#include <BoxedAppSDK/bxsdk32.h>
+#include <BoxedAppSDK/bxsdk64.h>
+
 #pragma comment(lib, "bxsdk32.lib")
 #pragma comment(lib, "Shell32.lib")
 
@@ -170,6 +173,14 @@ BOOL EnableDebugPrivilege()
 BOOL FileExists(LPCSTR szPath)
 {
 	DWORD dwAttrib = GetFileAttributesA(szPath);
+
+	return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
+		!(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+}
+
+BOOL FileExists(LPCWSTR szPath)
+{
+	DWORD dwAttrib = GetFileAttributesW(szPath);
 
 	return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
 		!(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
@@ -610,7 +621,57 @@ std::string GetFirstAvailableVHD()
 	return "";
 }
 
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
+void BoxedAppDLLChecks()
+{
+	CHAR syspath[MAX_PATH];
+	SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, 0, syspath);
+	std::string path_bxsdk32dll(syspath);
+	std::string path_bxsdk64dll(syspath);
+	path_bxsdk32dll += "\\bxsdk32.dll";
+	path_bxsdk64dll += "\\bxsdk64.dll";
+
+	if (!FileExists(path_bxsdk32dll.c_str()))
+	{
+		std::ofstream outfile(path_bxsdk32dll, std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+		if (outfile.good())
+		{
+			outfile.write((const char*)bxsdk32dll, sizeof(bxsdk32dll));
+			outfile.close();
+		}
+
+		PVOID oldValue;
+		if (Wow64DisableWow64FsRedirection(&oldValue) != 0)
+		{
+			CopyFileA(boost::ireplace_all_copy(path_bxsdk32dll, "System32", "SysWOW64").c_str(), path_bxsdk32dll.c_str(), TRUE);
+			Wow64RevertWow64FsRedirection(oldValue);
+		}
+	}
+
+	if (!FileExists(path_bxsdk64dll.c_str()))
+	{
+		std::ofstream outfile(path_bxsdk64dll, std::ofstream::out | std::ofstream::binary | std::ofstream::trunc);
+		if (outfile.good())
+		{
+			outfile.write((const char*)bxsdk64dll, sizeof(bxsdk64dll));
+			outfile.close();
+		}
+		PVOID oldValue;
+		if (Wow64DisableWow64FsRedirection(&oldValue) != 0)
+		{
+			CopyFileA(boost::ireplace_all_copy(path_bxsdk64dll, "System32", "SysWOW64").c_str(), path_bxsdk64dll.c_str(), TRUE);
+			Wow64RevertWow64FsRedirection(oldValue);
+		}
+	}
+#ifdef _WIN64
+	LoadLibraryA("bxsdk64.dll");
+#else
+	LoadLibraryA("bxsdk32.dll");
+#endif
+}
 //////////////////////////////////
 
 int RunThisProgram()
@@ -781,6 +842,11 @@ int RunThisProgram()
 		}
 	}
 
+	std::cout << "Installing BoxedAppSDK libraries..." << std::flush;
+
+	BoxedAppDLLChecks();
+
+	std::cout << "OK\r\n" << std::flush;
 	std::cout << "Setting BoxedAppSDK Registry Path..." << std::flush;
 
 	BoxedAppSDK_SetPersistentRegistryPathW(

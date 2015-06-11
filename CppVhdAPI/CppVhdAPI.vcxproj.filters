@@ -115,6 +115,12 @@
     <ClInclude Include="Ini\SimpleIni.h">
       <Filter>ini</Filter>
     </ClInclude>
+    <ClInclude Include="..\BoxedAppSDK\bxsdk32.h">
+      <Filter>BoxedAppSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BoxedAppSDK\bxsdk64.h">
+      <Filter>BoxedAppSDK</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\BoxedAppSDK\BoxedAppGuide_en.pdf">

@@ -63,6 +63,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\Debug;..\BoxedAppSDK;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <DelayLoadDLLs>bxsdk32.dll;bxsdk64.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -88,6 +89,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
       <AdditionalLibraryDirectories>..\Release;..\BoxedAppSDK;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>bxsdk32.dll;bxsdk64.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -115,6 +117,8 @@
     <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK.h" />
     <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK_Interfaces.h" />
     <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK_InterfacesID.h" />
+    <ClInclude Include="..\BoxedAppSDK\bxsdk32.h" />
+    <ClInclude Include="..\BoxedAppSDK\bxsdk64.h" />
     <ClInclude Include="config.hpp" />
     <ClInclude Include="Ini\ConvertUTF.h" />
     <ClInclude Include="Ini\SimpleIni.h" />
