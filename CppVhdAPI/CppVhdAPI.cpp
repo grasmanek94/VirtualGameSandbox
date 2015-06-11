@@ -868,9 +868,7 @@ int RunThisProgram()
 	std::cout << "Setting BoxedAppSDK options..." << std::flush;
 
 	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__EMBED_BOXEDAPP_IN_CHILD_PROCESSES, TRUE);
-#ifndef REGEMU
-	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__ENABLE_VIRTUAL_REGISTRY, FALSE);
-#endif
+	BoxedAppSDK_EnableOption(DEF_BOXEDAPPSDK_OPTION__INHERIT_OPTIONS, TRUE);
 
 #ifdef BXSDK_DEBUG
 	BoxedAppSDK_SetLogFileW(L"boxedapp.log");
