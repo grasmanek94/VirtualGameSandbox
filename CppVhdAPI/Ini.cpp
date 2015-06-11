@@ -44,12 +44,16 @@ BOOL IsProcessRunning(DWORD pid);
 using namespace std;
 #include <Ini/SimpleIni.h>
 
+extern std::string MountPoint;
+
 bool INI_SET_VALUE_STR(const string& file, const string& section, const string& key, const string& newvalue)
 {
 	CSimpleIniA ini;
 	ini.SetUnicode();
 
-	if (ini.LoadFile(file.c_str()) < 0)
+	std::string resultfile = MountPoint + file;
+
+	if (ini.LoadFile(resultfile.c_str()) < 0)
 	{
 		return false;
 	}
@@ -59,7 +63,7 @@ bool INI_SET_VALUE_STR(const string& file, const string& section, const string& 
 		return false;
 	}
 
-	if (ini.SaveFile(file.c_str(), false) < 0)
+	if (ini.SaveFile(resultfile.c_str(), false) < 0)
 	{
 		return false;
 	}

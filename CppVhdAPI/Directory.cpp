@@ -55,9 +55,11 @@ bool dirExists(const std::string& dirName_in)
 	return false;    // this is not a directory!
 }
 
+extern std::string MountPoint;
+
 bool DIRECTORY_EXISTS(const string& dir)
 {
-	return dirExists(dir);
+	return dirExists(MountPoint + dir);
 }
 
 // This function will register the application interface
