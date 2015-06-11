@@ -583,6 +583,34 @@ HANDLE GetRegistryFileHandle(void)
 }
 
 HANDLE registrydathandle;
+
+std::string GetFirstAvailableVHD()
+{
+	WIN32_FIND_DATA fileInfo;
+	HANDLE hFind;
+	hFind = FindFirstFileA("*.vhd", &fileInfo);
+
+	if (hFind == INVALID_HANDLE_VALUE) 
+	{ 
+		return ""; 
+	}
+
+	do
+	{
+		std::string file(fileInfo.cFileName);
+		std::reverse(file.begin(), file.end());
+		std::transform(file.begin(), file.end(), file.begin(), ::toupper);
+		if (file.size() > 3 && file.substr(0, 4).compare("DHV.") == 0)//.VHD
+		{
+			return std::string(fileInfo.cFileName);
+		}
+	} 
+	while (FindNextFileA(hFind, &fileInfo) != 0);
+
+	return "";
+}
+
+
 //////////////////////////////////
 
 int RunThisProgram()
@@ -637,11 +665,13 @@ int RunThisProgram()
 
 	DWORD   result;
 	//ULONG   bytesUsed;
+	std::string VHD_location = "./" + GetFirstAvailableVHD();
 
+	std::cout << " (" << VHD_location << ") " << std::flush;
 	//
-	if (AttachVirtualDiskEx(s2ws(Config.VHD_location).c_str(), handle) != ERROR_SUCCESS)
+	if (AttachVirtualDiskEx(s2ws(VHD_location).c_str(), handle) != ERROR_SUCCESS)
 	{
-		std::cout << "Unable to open virtual disk '" << Config.VHD_location << "'" << std::endl;
+		std::cout << "Unable to open virtual disk '" << VHD_location << "'" << std::endl;
 		return (int)pressanykey("Hit any key to quit the application\r\n");
 	}
 
@@ -754,7 +784,7 @@ int RunThisProgram()
 	std::cout << "Setting BoxedAppSDK Registry Path..." << std::flush;
 
 	BoxedAppSDK_SetPersistentRegistryPathW(
-		s2ws(Config.VHD_location + ".registry").c_str()
+		s2ws(VHD_location + ".registry").c_str()
 		//s2ws(MountLetter + ":\\User\\ProgramData\\registry.dat").c_str()
 		);
 
@@ -889,15 +919,13 @@ int RunThisProgram()
 	bool r = true;
 	while (r)
 	{
-		
-
 		DWORD dwFlags = CREATE_SUSPENDED | INHERIT_PARENT_AFFINITY;
 		STARTUPINFO si;
 		PROCESS_INFORMATION pi = PROCESS_INFORMATION();
 		BOOL fSuccess;
 		std::cout << "OK" << std::endl;
 
-		if (Config.UseShellExecute.compare("force") != 0)
+		//if (Config.UseShellExecute.compare("force") != 0)
 		{
 			// Create the child process, specifying a new environment block. 
 			SecureZeroMemory(&si, sizeof(STARTUPINFO));
@@ -913,26 +941,26 @@ int RunThisProgram()
 			ResumeThread(pi.hThread);
 			std::cout << "OK" << std::endl;
 		}
-		else if (!Config.UseShellExecute.compare("true") || !Config.UseShellExecute.compare("force"))
-		{
-			HANDLE hInstance = INVALID_HANDLE_VALUE;
-			Sleep(1000);
-			if (!IsProcessRunning(pi.dwProcessId))
-			{
-				std::cout << "Trying shellexecute..." << std::flush;
-				CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-				hInstance = ShellExecute(NULL, "open", (MountPoint + Config.ApplicationProcess).c_str(), (LPSTR)Config.ApplicationParameters.c_str(), (MountPoint + Config.ApplicationWorkingDir).c_str(), SW_SHOWNORMAL);
-				if (hInstance > (HANDLE)32)
-				{
-					std::cout << "OK" << std::endl;
-				}
-				else
-				{
-					std::cout << "Unable to launch process " << (MountPoint + Config.ApplicationProcess).c_str() << " (" << GetLastError() << ")" << std::endl;
-					return (int)pressanykey("Hit any key to quit the application\r\n");
-				}
-			}
-		}
+		//else if (!Config.UseShellExecute.compare("true") || !Config.UseShellExecute.compare("force"))
+		//{
+		//	HANDLE hInstance = INVALID_HANDLE_VALUE;
+		//	Sleep(1000);
+		//	if (!IsProcessRunning(pi.dwProcessId))
+		//	{
+		//		std::cout << "Trying shellexecute..." << std::flush;
+		//		CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+		//		hInstance = ShellExecute(NULL, "open", (MountPoint + Config.ApplicationProcess).c_str(), (LPSTR)Config.ApplicationParameters.c_str(), (MountPoint + Config.ApplicationWorkingDir).c_str(), SW_SHOWNORMAL);
+		//		if (hInstance > (HANDLE)32)
+		//		{
+		//			std::cout << "OK" << std::endl;
+		//		}
+		//		else
+		//		{
+		//			std::cout << "Unable to launch process " << (MountPoint + Config.ApplicationProcess).c_str() << " (" << GetLastError() << ")" << std::endl;
+		//			return (int)pressanykey("Hit any key to quit the application\r\n");
+		//		}
+		//	}
+		//}
 
 		int ret = pressanykey("Press any key when done playing to close this window (will detach the Virtual Hard Drive too!)\r\n");
 		r = ret == 'R' || ret == 'r';

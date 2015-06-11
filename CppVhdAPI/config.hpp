@@ -28,8 +28,8 @@ void CheckConfig();
 
 struct _Config
 {
-	std::string VHD_location;
-	std::string UseShellExecute;
+	//std::string VHD_location;
+	//std::string UseShellExecute;
 
 	std::string ApplicationProcess;
 	std::string ApplicationWorkingDir;
@@ -43,8 +43,8 @@ struct _Config
 	_Config()
 	{
 		//default config
-		VHD_location = ".\\game.vhd";
-		UseShellExecute = "false";
+		//VHD_location = ".\\game.vhd";
+		//UseShellExecute = "false";
 
 		ApplicationProcess = "Game\\game.exe";
 		ApplicationWorkingDir = "Game\\";
@@ -65,13 +65,13 @@ struct _Config
 		CheckConfig();
 		boost::property_tree::json_parser::read_json(".\\config.cfg", pt);
 
-		CONFIG_SET(std::string, "VHD.Location", VHD_location);
+		//CONFIG_SET(std::string, "VHD.Location", VHD_location);
 
 		CONFIG_SET(std::string, "Application.Process", ApplicationProcess);
 		CONFIG_SET(std::string, "Application.WorkingDirectory", ApplicationWorkingDir);
 		CONFIG_SET(std::string, "Application.CommandLine", ApplicationParameters);
 		CONFIG_SET(std::string, "Application.AutoLaunch", ApplicationAutoLaunch);
-		CONFIG_SET(std::string, "Application.UseShellExecute", UseShellExecute);
+		//CONFIG_SET(std::string, "Application.UseShellExecute", UseShellExecute);
 
 		CONFIG_SET(std::string, "GameConfig.Nickname", GameConfigNickname);
 
