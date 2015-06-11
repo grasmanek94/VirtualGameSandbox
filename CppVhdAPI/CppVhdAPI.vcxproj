@@ -54,7 +54,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalIncludeDirectories>..\angelscriptsdk\angelscript\include;..\angelscriptsdk\;..;..\CppVhdAPI;..\BoxedAppSDK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -74,7 +74,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
@@ -102,16 +102,29 @@
     <ClCompile Include="..\angelscriptsdk\add_on\scriptmath\scriptmathcomplex.cpp" />
     <ClCompile Include="..\angelscriptsdk\add_on\scriptstdstring\scriptstdstring.cpp" />
     <ClCompile Include="..\angelscriptsdk\add_on\scriptstdstring\scriptstdstring_utils.cpp" />
-    <ClCompile Include="CppVhdAPI.cpp" />
-    <ClCompile Include="Directory.cpp" />
-    <ClCompile Include="Ini.cpp" />
+    <ClCompile Include="cleanup.cxx" />
+    <ClCompile Include="config.cxx" />
+    <ClCompile Include="CppVhdAPI.cxx" />
+    <ClCompile Include="debugging.cxx" />
+    <ClCompile Include="Directory.cxx" />
+    <ClCompile Include="file_functions.cxx" />
+    <ClCompile Include="globalvars.cxx" />
+    <ClCompile Include="Ini.cxx" />
     <ClCompile Include="Ini\ConvertUTF.c" />
-    <ClCompile Include="Registry.cpp" />
+    <ClCompile Include="key_helper.cxx" />
+    <ClCompile Include="libraries.cxx" />
+    <ClCompile Include="mountpoint_helper.cxx" />
+    <ClCompile Include="process_helper.cxx" />
+    <ClCompile Include="randomization.cxx" />
+    <ClCompile Include="Registry.cxx" />
     <ClCompile Include="Registry\RegistryKey.cpp" />
     <ClCompile Include="Registry\RegKeyIterator.cpp" />
     <ClCompile Include="Registry\Utils.cpp" />
     <ClCompile Include="Registry\Win32Exception.cpp" />
-    <ClCompile Include="scripting.cpp" />
+    <ClCompile Include="scripting.cxx" />
+    <ClCompile Include="string_converters.cxx" />
+    <ClCompile Include="vhd_helper.cxx" />
+    <ClCompile Include="virtualization_helper.cxx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK.h" />
@@ -119,9 +132,17 @@
     <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK_InterfacesID.h" />
     <ClInclude Include="..\BoxedAppSDK\bxsdk32.h" />
     <ClInclude Include="..\BoxedAppSDK\bxsdk64.h" />
-    <ClInclude Include="config.hpp" />
+    <ClInclude Include="cleanup.hxx" />
+    <ClInclude Include="config.hxx" />
+    <ClInclude Include="debugging.hxx" />
+    <ClInclude Include="file_functions.hxx" />
+    <ClInclude Include="globalvars.hxx" />
     <ClInclude Include="Ini\ConvertUTF.h" />
     <ClInclude Include="Ini\SimpleIni.h" />
+    <ClInclude Include="key_helper.hxx" />
+    <ClInclude Include="mountpoint_helper.hxx" />
+    <ClInclude Include="process_helper.hxx" />
+    <ClInclude Include="randomization.hxx" />
     <ClInclude Include="Registry\CountedRegKey.hpp" />
     <ClInclude Include="Registry\ExpandableBuffer.hpp" />
     <ClInclude Include="Registry\ReferenceCounted.hpp" />
@@ -130,6 +151,10 @@
     <ClInclude Include="Registry\RegKeyIterator.hpp" />
     <ClInclude Include="Registry\Utils.hpp" />
     <ClInclude Include="Registry\Win32Exception.hpp" />
+    <ClInclude Include="scripting.hxx" />
+    <ClInclude Include="string_converters.hxx" />
+    <ClInclude Include="vhd_helper.hxx" />
+    <ClInclude Include="virtualization_helper.hxx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\BoxedAppSDK\BoxedAppGuide_en.pdf" />

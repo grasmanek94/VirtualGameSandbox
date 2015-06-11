@@ -1,19 +1,4 @@
-#include <windows.h>
-#include <stdio.h>
-#include <string>
-#include <iostream>
-#include <string>
-#include <tchar.h>
-#include <strsafe.h>
 #include <angelscript.h>
-#define DEFIND_GUID
-#include <initguid.h>
-#include <virtdisk.h>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/info_parser.hpp>
-#include <boost/foreach.hpp>
-#include <locale>
-#include <codecvt>
 #include <add_on/scriptbuilder/scriptbuilder.h>
 #include <add_on/scriptstdstring/scriptstdstring.h>
 #include <add_on/scriptarray/scriptarray.h>
@@ -21,29 +6,15 @@
 #include <add_on/scripthelper/scripthelper.h>
 #include <add_on/scriptmath/scriptmath.h>
 #include <add_on/debugger/debugger.h>
-#include <config.hpp>
 
-#pragma comment(lib, "angelscript.lib")
+#include <iostream>
+#include <string>
 
-std::wstring s2ws(const std::string& str);
-std::string ws2s(const std::wstring& wstr);
-TCHAR pressanykey(const TCHAR* prompt = NULL);
-DWORD OpenVDisk(const char* virtualDiskFilePath, HANDLE *handle);
-DWORD OpenISO(const char* isoFilePath, HANDLE *handle);
+#include <assert.h>
 
-#define ARRAY_SIZE(a)                               \
-	((sizeof(a) / sizeof(*(a))) /                   \
-	static_cast<size_t>(!(sizeof(a) % sizeof(*(a)))))
-
-BOOL EnableDebugPrivilege();
-void CheckConfig();
-BOOL FileExists(LPCSTR szPath);
-
-BOOL IsProcessRunning(DWORD pid);
-
-using namespace std;
 #include <Registry/RegistryKey.hpp>
 
+using namespace std;
 using namespace JetByteTools;
 
 bool REG_SOFTWARE_SetValueStr(int type, const string& key, const string& valueName, const string& value, int datatype /*= REG_SZ*/, int ACCESS)

@@ -1,19 +1,4 @@
-#include <windows.h>
-#include <stdio.h>
-#include <string>
-#include <iostream>
-#include <string>
-#include <tchar.h>
-#include <strsafe.h>
 #include <angelscript.h>
-#define DEFIND_GUID
-#include <initguid.h>
-#include <virtdisk.h>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/info_parser.hpp>
-#include <boost/foreach.hpp>
-#include <locale>
-#include <codecvt>
 #include <add_on/scriptbuilder/scriptbuilder.h>
 #include <add_on/scriptstdstring/scriptstdstring.h>
 #include <add_on/scriptarray/scriptarray.h>
@@ -21,25 +6,15 @@
 #include <add_on/scripthelper/scripthelper.h>
 #include <add_on/scriptmath/scriptmath.h>
 #include <add_on/debugger/debugger.h>
-#include <config.hpp>
 
-#pragma comment(lib, "angelscript.lib")
+#include <iostream>
+#include <string>
+#include <sstream>
 
-std::wstring s2ws(const std::string& str);
-std::string ws2s(const std::wstring& wstr);
-TCHAR pressanykey(const TCHAR* prompt = NULL);
-DWORD OpenVDisk(const char* virtualDiskFilePath, HANDLE *handle);
-DWORD OpenISO(const char* isoFilePath, HANDLE *handle);
+#include <assert.h>
 
-#define ARRAY_SIZE(a)                               \
-	((sizeof(a) / sizeof(*(a))) /                   \
-	static_cast<size_t>(!(sizeof(a) % sizeof(*(a)))))
-
-BOOL EnableDebugPrivilege();
-void CheckConfig();
-BOOL FileExists(LPCSTR szPath);
-
-BOOL IsProcessRunning(DWORD pid);
+#include "file_functions.hxx"
+#include "globalvars.hxx"
 
 using namespace std;
 // Function prototypes
@@ -69,7 +44,14 @@ void MessageCallback(const asSMessageInfo *msg, void *param)
 	printf("%s (%d, %d) : %s : %s\n", msg->section, msg->row, msg->col, type, msg->message);
 }
 
-extern _Config Config;
+void PrintSqs(int count)
+{
+	unsigned char s = 219;
+	for (int i = 0; i < count; ++i)
+	{
+		std::cout << s;
+	}
+}
 
 void TryScriptingShit(const std::string& script)
 {
@@ -353,8 +335,6 @@ int script_rand()
 	return rand();
 }
 
-extern std::string MountPoint;
-
 string GetConfig(const string& option)
 {
 	if (option.compare("VHD.MountPoint") == 0)
@@ -369,4 +349,27 @@ string GetConfig(const string& option)
 		var = v.get();
 	}
 	return var;
+}
+
+bool PerformScriptExecution(void)
+{
+	std::string Exec_Script(MountLetter + ":\\configuration.cxx");
+
+	if (FileExists(Exec_Script.c_str()))
+	{
+		std::cout << "Executing setup script..." << std::endl;
+		PrintSqs(32);
+		std::cout << " SCRIPT  OUTPUT ";
+		PrintSqs(112);
+		std::cout << std::endl;
+		TryScriptingShit(Exec_Script);
+		std::cout << std::endl;
+		PrintSqs(160);
+		std::cout << std::endl;
+	}
+	else
+	{
+		std::cout << "No script available, continuing" << std::endl;
+	}
+	return true;
 }
