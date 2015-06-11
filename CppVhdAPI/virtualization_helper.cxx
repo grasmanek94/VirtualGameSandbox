@@ -72,7 +72,7 @@ void PerformRedirectionEnv(const char* source, const char* dest)
 {
 	char * current = getenv(source);
 
-	std::cout << "Redirecting<" << std::string(current) << ">=<" << std::string(dest) << ">" << std::endl;
+	std::cout << "RD<" << std::string(current) << ">=<" << std::string(dest) << ">" << std::endl;
 	SetEnvironmentVariableA(source, dest);
 	BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_WriteCopy, current, dest);
 }
@@ -114,7 +114,7 @@ void ConfigureBoxedAppSDK()
 #endif
 
 	std::cout << "OK\r\n" << std::flush;
-	std::cout << "Updating environment to configured variables...\r\n" << std::flush;
+	std::cout << "================ Updating environment to configured variables... ===============" << std::flush;
 
 #ifdef REGEMU
 	BoxedAppSDK_SetRegKeyIsolationModeA(HKEY_CLASSES_ROOT, "", KEY_WOW64_32KEY, BxIsolationMode_WriteCopy);
@@ -195,5 +195,5 @@ void ConfigureBoxedAppSDK()
 	}
 #endif
 
-	std::cout << "OK" << std::endl;
+	std::cout << "===================================== OK =======================================" << std::flush;
 }

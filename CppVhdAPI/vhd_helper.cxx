@@ -186,7 +186,6 @@ bool OpenGameDisk(void)
 
 bool ConfigurePathInformation(void)
 {
-	std::cout << "OK" << std::endl;
 	std::cout << "Configuring path information..." << std::flush;
 
 	// Now we need to grab the device name \\.\PhysicalDrive#
@@ -230,10 +229,10 @@ bool TakeDiskOnline(void)
 		return false;
 	}
 
-	std::cout << "Executing mount..." << std::endl;
+	std::cout << "Executing mount..." << std::flush;
 	ResumeThread(pi.hThread);
 	WaitForSingleObject(pi.hProcess, INFINITE);
-	std::cout << "Executed" << std::endl;
+	std::cout << "(Executed) OK" << std::endl;
 	return true;
 }
 
