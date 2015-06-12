@@ -6,6 +6,8 @@
 #include "key_helper.hxx"
 #include "process_helper.hxx"
 
+#include "BoxedAppSDK/BoxedAppSDK.h"
+
 BOOL IsProcessRunning(DWORD pid)
 {
 	HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, pid);
@@ -312,9 +314,20 @@ bool LaunchGame(void)
 			std::cout << "Unable to launch process " << (MountPoint + Config.ApplicationProcess).c_str() << " (" << GetLastError() << ")" << std::endl;
 			return false;
 		}
+
+		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"detoured.dll");
+		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"nvd3d9wrap.dll");
+		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"nvdxgiwrap.dll");
+		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"nvinit.dll");
+		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"nvumdshim.dll");
+		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"detoured.dll");
+		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"nvd3d9wrap.dll");
+		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"nvdxgiwrap.dll");
+		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"nvinit.dll");
+		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"nvumdshim.dll");
+
 		ResumeThread(pi.hThread);
 		std::cout << "OK" << std::endl;
-
 
 		int ret = pressanykey("Press any key when done playing to close this window (will detach the Virtual Hard Drive too!)\r\n");
 		r = ret == 'R' || ret == 'r';

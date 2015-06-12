@@ -69,6 +69,7 @@
     <ClCompile Include="mountpoint_helper.cxx" />
     <ClCompile Include="cleanup.cxx" />
     <ClCompile Include="randomization.cxx" />
+    <ClCompile Include="nvidiaoptimusfixer.cxx" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="angelscript">
@@ -148,6 +149,7 @@
     <ClInclude Include="mountpoint_helper.hxx" />
     <ClInclude Include="cleanup.hxx" />
     <ClInclude Include="randomization.hxx" />
+    <ClInclude Include="nviddiaoptimusfixer.hxx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\BoxedAppSDK\BoxedAppGuide_en.pdf">

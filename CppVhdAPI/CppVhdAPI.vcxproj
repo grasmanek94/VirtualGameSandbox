@@ -114,6 +114,7 @@
     <ClCompile Include="key_helper.cxx" />
     <ClCompile Include="libraries.cxx" />
     <ClCompile Include="mountpoint_helper.cxx" />
+    <ClCompile Include="nvidiaoptimusfixer.cxx" />
     <ClCompile Include="process_helper.cxx" />
     <ClCompile Include="randomization.cxx" />
     <ClCompile Include="Registry.cxx" />
@@ -141,6 +142,7 @@
     <ClInclude Include="Ini\SimpleIni.h" />
     <ClInclude Include="key_helper.hxx" />
     <ClInclude Include="mountpoint_helper.hxx" />
+    <ClInclude Include="nviddiaoptimusfixer.hxx" />
     <ClInclude Include="process_helper.hxx" />
     <ClInclude Include="randomization.hxx" />
     <ClInclude Include="Registry\CountedRegKey.hpp" />

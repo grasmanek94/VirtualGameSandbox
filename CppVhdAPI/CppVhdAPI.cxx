@@ -11,6 +11,8 @@
 #include "virtualization_helper.hxx"
 #include "config.hxx"
 
+#include "nviddiaoptimusfixer.hxx"
+
 void ShowHello()
 {
 	std::cout << "GameLauncher by Rafal 'Gamer_Z' Grasman" << std::endl;
@@ -20,6 +22,8 @@ void ShowHello()
 
 int RunThisProgram()
 {
+	//FixNvidiaOptimusNotChainingGames();
+
 	InitialiseRandomGenerator();
 
 	ShowHello();
@@ -71,6 +75,8 @@ int RunThisProgram()
 	PerformScriptExecution();
 
 	CheckConfigAutoLaunch();
+
+	//FixNvidiaOptimusNotChainingGamesCleanUp();
 
 	if (!LaunchGame())
 	{

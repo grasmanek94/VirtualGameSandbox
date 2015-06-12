@@ -170,6 +170,21 @@ void ConfigureBoxedAppSDK()
 	SetEnvironmentVariable("USERNAME", "User");
 	SetEnvironmentVariable("HOMEPATH", "\\User");
 
+	char * nof = getenv("ALLUSERSPROFILE");
+	std::string nvidiaoptimusfix_target(nof);
+	nvidiaoptimusfix_target += "\\NVIDIA Corporation\\";
+	std::string nvidiaoptimusfix_source(MountLetter + ":\\User\\ProgramData\\NVIDIA Corporation\\");
+
+	char * nof2 = getenv("ProgramFiles(x86)");
+	std::string nvidiaoptimusfix2_target(nof2);
+	nvidiaoptimusfix2_target += "\\NVIDIA Corporation\\";
+	std::string nvidiaoptimusfix2_source(MountLetter + ":\\User\\ProgramFiles\\x86\\NVIDIA Corporation\\");
+
+	char * nof3 = getenv("ProgramFiles");
+	std::string nvidiaoptimusfix3_target(nof3);
+	nvidiaoptimusfix3_target += "\\NVIDIA Corporation\\";
+	std::string nvidiaoptimusfix3_source(MountLetter + ":\\User\\ProgramFiles\\x64\\NVIDIA Corporation\\");
+
 	PerformRedirectionEnv("USERPROFILE", (MountLetter + ":\\User").c_str());
 	PerformRedirectionEnv("PUBLIC", (MountLetter + ":\\User").c_str());
 	PerformRedirectionEnv("APPDATA", (MountLetter + ":\\User\\AppData").c_str());
@@ -186,6 +201,22 @@ void ConfigureBoxedAppSDK()
 	//PerformRedirectionEnv("windir", (MountLetter + ":\\User\\Windows").c_str());
 	//PerformRedirectionEnv("SystemDrive", (MountLetter + ":").c_str());
 	//PerformRedirectionEnv("HOMEDRIVE", (MountLetter + ":").c_str());
+
+	//NVIDIA Optimnus fix
+	BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, nvidiaoptimusfix_source.c_str(), nvidiaoptimusfix_target.c_str());
+	BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, nvidiaoptimusfix2_source.c_str(), nvidiaoptimusfix2_target.c_str());
+	BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, nvidiaoptimusfix3_source.c_str(), nvidiaoptimusfix3_target.c_str());
+
+	LoadLibraryA("detoured.dll");
+	LoadLibraryA("nvd3d9wrap.dll");
+	LoadLibraryA("nvdxgiwrap.dll");
+	LoadLibraryA("nvinit.dll");
+	LoadLibraryA("nvumdshim.dll");
+	LoadLibraryA("detoured.dll");
+	LoadLibraryA("nvd3d9wrap.dll");
+	LoadLibraryA("nvdxgiwrap.dll");
+	LoadLibraryA("nvinit.dll");
+	LoadLibraryA("nvumdshim.dll");
 
 #ifdef REGEMU
 	registrydathandle = GetRegistryFileHandle();
