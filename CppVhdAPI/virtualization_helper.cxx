@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iostream>
 #include <Windows.h>
+#include <vector>
 #include <Shlobj.h>
 
 #include <boost/algorithm/string.hpp>
@@ -75,6 +76,11 @@ void PerformRedirectionEnv(const char* source, const char* dest)
 	std::cout << "RD<" << std::string(current) << ">=<" << std::string(dest) << ">" << std::endl;
 	SetEnvironmentVariableA(source, dest);
 	BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_WriteCopy, current, dest);
+}
+
+std::string GetEnvString(std::string var)
+{
+	return std::string(getenv(var.c_str()));
 }
 
 void ConfigureBoxedAppSDK()
@@ -170,20 +176,16 @@ void ConfigureBoxedAppSDK()
 	SetEnvironmentVariable("USERNAME", "User");
 	SetEnvironmentVariable("HOMEPATH", "\\User");
 
-	char * nof = getenv("ALLUSERSPROFILE");
-	std::string nvidiaoptimusfix_target(nof);
-	nvidiaoptimusfix_target += "\\NVIDIA Corporation\\";
-	std::string nvidiaoptimusfix_source(MountLetter + ":\\User\\ProgramData\\NVIDIA Corporation\\");
-
-	char * nof2 = getenv("ProgramFiles(x86)");
-	std::string nvidiaoptimusfix2_target(nof2);
-	nvidiaoptimusfix2_target += "\\NVIDIA Corporation\\";
-	std::string nvidiaoptimusfix2_source(MountLetter + ":\\User\\ProgramFiles\\x86\\NVIDIA Corporation\\");
-
-	char * nof3 = getenv("ProgramFiles");
-	std::string nvidiaoptimusfix3_target(nof3);
-	nvidiaoptimusfix3_target += "\\NVIDIA Corporation\\";
-	std::string nvidiaoptimusfix3_source(MountLetter + ":\\User\\ProgramFiles\\x64\\NVIDIA Corporation\\");
+	typedef std::pair<std::string, std::string> redirection;
+	std::vector<redirection> NvidiaOptimusFix = 
+	{
+		redirection(MountLetter + ":\\User\\ProgramData\\NVIDIA Corporation\\",							GetEnvString("ALLUSERSPROFILE") + "\\NVIDIA Corporation\\"),
+		//redirection(MountLetter + ":\\User\\ProgramFiles\\x86\\NVIDIA Corporation\\",					GetEnvString("ProgramFiles(x86)") + "\\NVIDIA Corporation\\"),
+		//redirection(MountLetter + ":\\User\\ProgramFiles\\x64\\NVIDIA Corporation\\",					GetEnvString("ProgramFiles") + "\\NVIDIA Corporation\\"),
+		redirection(MountLetter + ":\\User\\ProgramData\\NVIDIA\\",										GetEnvString("ALLUSERSPROFILE") + "\\NVIDIA\\"),
+		//redirection(MountLetter + ":\\User\\ProgramFiles\\x86\\NVIDIA Corporation\\coprocmanager\\",	GetEnvString("ProgramFiles(x86)") + "\\NVIDIA Corporation\\coprocmanager\\"),
+		//redirection(MountLetter + ":\\User\\ProgramFiles\\x64\\NVIDIA Corporation\\coprocmanager\\",	GetEnvString("ProgramFiles") + "\\NVIDIA Corporation\\coprocmanager\\"),
+	};
 
 	PerformRedirectionEnv("USERPROFILE", (MountLetter + ":\\User").c_str());
 	PerformRedirectionEnv("PUBLIC", (MountLetter + ":\\User").c_str());
@@ -191,32 +193,29 @@ void ConfigureBoxedAppSDK()
 	PerformRedirectionEnv("LOCALAPPDATA", (MountLetter + ":\\User\\AppData\\Local").c_str());
 	PerformRedirectionEnv("ALLUSERSPROFILE", (MountLetter + ":\\User\\ProgramData").c_str());
 	PerformRedirectionEnv("ProgramData", (MountLetter + ":\\User\\ProgramData").c_str());
-	PerformRedirectionEnv("ProgramFiles", (MountLetter + ":\\User\\ProgramFiles\\x64").c_str());
-	PerformRedirectionEnv("ProgramFiles(x86)", (MountLetter + ":\\User\\ProgramFiles\\x86").c_str());
-	PerformRedirectionEnv("ProgramW6432", (MountLetter + ":\\User\\ProgramFiles\\x64").c_str());
+	//PerformRedirectionEnv("ProgramFiles", (MountLetter + ":\\User\\ProgramFiles\\x64").c_str());
+	//PerformRedirectionEnv("ProgramFiles(x86)", (MountLetter + ":\\User\\ProgramFiles\\x86").c_str());
+	//PerformRedirectionEnv("ProgramW6432", (MountLetter + ":\\User\\ProgramFiles\\x64").c_str());
 	PerformRedirectionEnv("CommonProgramFiles", (MountLetter + ":\\User\\ProgramFiles\\Common\\x64").c_str());
 	PerformRedirectionEnv("CommonProgramFiles(x86)", (MountLetter + ":\\User\\ProgramFiles\\Common\\x86").c_str());
 	PerformRedirectionEnv("CommonProgramW6432", (MountLetter + ":\\User\\ProgramFiles\\Common\\x64").c_str());
-	//PerformRedirectionEnv("SystemRoot", (MountLetter + ":\\User\\Windows").c_str());
-	//PerformRedirectionEnv("windir", (MountLetter + ":\\User\\Windows").c_str());
-	//PerformRedirectionEnv("SystemDrive", (MountLetter + ":").c_str());
-	//PerformRedirectionEnv("HOMEDRIVE", (MountLetter + ":").c_str());
 
 	//NVIDIA Optimnus fix
-	BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, nvidiaoptimusfix_source.c_str(), nvidiaoptimusfix_target.c_str());
-	BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, nvidiaoptimusfix2_source.c_str(), nvidiaoptimusfix2_target.c_str());
-	BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, nvidiaoptimusfix3_source.c_str(), nvidiaoptimusfix3_target.c_str());
+	for (auto i : NvidiaOptimusFix)
+	{
+		BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, i.first.c_str(), i.second.c_str());
+	}
 
-	LoadLibraryA("detoured.dll");
-	LoadLibraryA("nvd3d9wrap.dll");
-	LoadLibraryA("nvdxgiwrap.dll");
-	LoadLibraryA("nvinit.dll");
-	LoadLibraryA("nvumdshim.dll");
-	LoadLibraryA("detoured.dll");
-	LoadLibraryA("nvd3d9wrap.dll");
-	LoadLibraryA("nvdxgiwrap.dll");
-	LoadLibraryA("nvinit.dll");
-	LoadLibraryA("nvumdshim.dll");
+	//LoadLibraryA("detoured.dll");
+	//LoadLibraryA("nvd3d9wrap.dll");
+	//LoadLibraryA("nvdxgiwrap.dll");
+	//LoadLibraryA("nvinit.dll");
+	//LoadLibraryA("nvumdshim.dll");
+	//LoadLibraryA("detoured.dll");
+	//LoadLibraryA("nvd3d9wrap.dll");
+	//LoadLibraryA("nvdxgiwrap.dll");
+	//LoadLibraryA("nvinit.dll");
+	//LoadLibraryA("nvumdshim.dll");
 
 #ifdef REGEMU
 	registrydathandle = GetRegistryFileHandle();
