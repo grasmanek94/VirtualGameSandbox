@@ -8,6 +8,8 @@
 
 #include "BoxedAppSDK/BoxedAppSDK.h"
 
+#include "nvidiaHelper.hxx"
+
 BOOL IsProcessRunning(DWORD pid)
 {
 	HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, pid);
@@ -315,25 +317,24 @@ bool LaunchGame(void)
 			return false;
 		}
 
-		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"detoured.dll");
-		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"nvd3d9wrap.dll");
-		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"nvdxgiwrap.dll");
-		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"nvinit.dll");
-		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"nvumdshim.dll");
-		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"detoured.dll");
-		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"nvd3d9wrap.dll");
-		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"nvdxgiwrap.dll");
-		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"nvinit.dll");
-		//BoxedAppSDK_RemoteProcess_LoadLibrary(pi.dwProcessId,"nvumdshim.dll");
-
 		ResumeThread(pi.hThread);
 		std::cout << "OK" << std::endl;
 
-		int ret = pressanykey("Press any key when done playing to close this window (will detach the Virtual Hard Drive too!)\r\n");
+		int ret = pressanykey("Press any key when done playing to close this window (will detach the Virtual Hard Drive too!)\r\nUse 'R' to restart application\r\nUse 'N' to launch Nvidia Optimus Tool\r\n");
 		r = ret == 'R' || ret == 'r';
 		while (IsProcessRunning(pi.dwProcessId))
 		{
-			ret = pressanykey("Game is still running.\r\n");
+			bool showtext = true;
+		
+		back:
+			ret = showtext ? pressanykey("Game is still running.\r\n") : pressanykey("");
+		
+			if (ret == 'n' || ret == 'N')
+			{
+				LaunchNvidiaOptimusTool();
+				showtext = false;
+				goto back;
+			}
 			r = ret == 'R' || ret == 'r';
 		}
 	}

@@ -114,6 +114,7 @@
     <ClCompile Include="key_helper.cxx" />
     <ClCompile Include="libraries.cxx" />
     <ClCompile Include="mountpoint_helper.cxx" />
+    <ClCompile Include="nvidiaHelper.cxx" />
     <ClCompile Include="nvidiaoptimusfixer.cxx" />
     <ClCompile Include="process_helper.cxx" />
     <ClCompile Include="randomization.cxx" />
@@ -133,6 +134,8 @@
     <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK_InterfacesID.h" />
     <ClInclude Include="..\BoxedAppSDK\bxsdk32.h" />
     <ClInclude Include="..\BoxedAppSDK\bxsdk64.h" />
+    <ClInclude Include="..\Nvidia\nvOptimusTool_x64.h" />
+    <ClInclude Include="..\Nvidia\nvOptimusTool_x86.h" />
     <ClInclude Include="cleanup.hxx" />
     <ClInclude Include="config.hxx" />
     <ClInclude Include="debugging.hxx" />
@@ -143,6 +146,7 @@
     <ClInclude Include="key_helper.hxx" />
     <ClInclude Include="mountpoint_helper.hxx" />
     <ClInclude Include="nviddiaoptimusfixer.hxx" />
+    <ClInclude Include="nvidiaHelper.hxx" />
     <ClInclude Include="process_helper.hxx" />
     <ClInclude Include="randomization.hxx" />
     <ClInclude Include="Registry\CountedRegKey.hpp" />

@@ -70,6 +70,9 @@
     <ClCompile Include="cleanup.cxx" />
     <ClCompile Include="randomization.cxx" />
     <ClCompile Include="nvidiaoptimusfixer.cxx" />
+    <ClCompile Include="nvidiaHelper.cxx">
+      <Filter>Nvidia</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="angelscript">
@@ -86,6 +89,9 @@
     </Filter>
     <Filter Include="ini">
       <UniqueIdentifier>{3ebcc332-5346-4d43-b4b8-dd1f88ec8a0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Nvidia">
+      <UniqueIdentifier>{8a2d11a0-e5a3-436b-8288-dcea79bc3685}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +156,15 @@
     <ClInclude Include="cleanup.hxx" />
     <ClInclude Include="randomization.hxx" />
     <ClInclude Include="nviddiaoptimusfixer.hxx" />
+    <ClInclude Include="..\Nvidia\nvOptimusTool_x64.h">
+      <Filter>Nvidia</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Nvidia\nvOptimusTool_x86.h">
+      <Filter>Nvidia</Filter>
+    </ClInclude>
+    <ClInclude Include="nvidiaHelper.hxx">
+      <Filter>Nvidia</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\BoxedAppSDK\BoxedAppGuide_en.pdf">

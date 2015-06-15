@@ -176,6 +176,7 @@ void ConfigureBoxedAppSDK()
 	SetEnvironmentVariable("USERNAME", "User");
 	SetEnvironmentVariable("HOMEPATH", "\\User");
 	
+	////NVIDIA Optimnus fix --START--
 	typedef std::pair<std::string, std::string> redirection;
 	std::vector<redirection> NvidiaOptimusFix = 
 	{
@@ -187,20 +188,18 @@ void ConfigureBoxedAppSDK()
 		redirection(MountLetter + ":\\User\\ProgramFiles\\x64\\NVIDIA Corporation\\coprocmanager\\",	GetEnvString("ProgramFiles") + "\\NVIDIA Corporation\\coprocmanager\\"),
 	};
 
-	////NVIDIA Optimnus fix
 	for (auto i : NvidiaOptimusFix)
 	{
 		BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, i.first.c_str(), i.second.c_str());
 		BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, i.second.c_str(), i.first.c_str());
-		//std::string command(
-		//	"robocopy \"" +
-		//	boost::replace_all_copy(boost::replace_all_copy(i.second, "\"", ""), "\\", "/") + "\" \"" +
-		//	boost::replace_all_copy(boost::replace_all_copy(i.first, "\"", ""), "\\", "/") +
-		//	"\" /E /B /COPYALL /W:0 /R:0 /XO > NUL");
-		////std::cout << command << std::endl;
-		//system(command.c_str());
 	}
 
+	SetEnvironmentVariable("SESSIONNAME", "Console");
+	SetEnvironmentVariable("SHIM_MCCOMPAT", "0x810000001");
+	SetEnvironmentVariable("NVIDIAWHITELISTED", "0x01");
+	////NVIDIA Optimnus fix ---END---
+
+	//redirection
 	PerformRedirectionEnv("USERPROFILE", (MountLetter + ":\\User").c_str());
 	PerformRedirectionEnv("PUBLIC", (MountLetter + ":\\User").c_str());
 	PerformRedirectionEnv("APPDATA", (MountLetter + ":\\User\\AppData").c_str());
@@ -214,9 +213,6 @@ void ConfigureBoxedAppSDK()
 	PerformRedirectionEnv("CommonProgramFiles(x86)", (MountLetter + ":\\User\\ProgramFiles\\Common\\x86").c_str());
 	PerformRedirectionEnv("CommonProgramW6432", (MountLetter + ":\\User\\ProgramFiles\\Common\\x64").c_str());
 
-	SetEnvironmentVariable("SESSIONNAME", "Console");
-	SetEnvironmentVariable("SHIM_MCCOMPAT", "0x810000001");
-	SetEnvironmentVariable("NVIDIAWHITELISTED", "0x01");
 #ifdef REGEMU
 	registrydathandle = GetRegistryFileHandle();
 	if (registrydathandle != INVALID_HANDLE_VALUE)
