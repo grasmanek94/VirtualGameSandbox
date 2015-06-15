@@ -198,6 +198,7 @@ void ConfigureBoxedAppSDK()
 			"\" /E /B /COPYALL /W:0 /R:0 /XO > NUL");
 		//std::cout << command << std::endl;
 		system(command.c_str());
+		//well at least the issues are fixed now too!
 
 		BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, i.first.c_str(), i.second.c_str());
 		BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, i.second.c_str(), i.first.c_str());
