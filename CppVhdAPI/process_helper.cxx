@@ -322,19 +322,29 @@ bool LaunchGame(void)
 
 		int ret = pressanykey("Press any key when done playing to close this window (will detach the Virtual Hard Drive too!)\r\nUse 'R' to restart application\r\nUse 'N' to launch Nvidia Optimus Tool\r\n");
 		r = ret == 'R' || ret == 'r';
+		bool launchNvidiaHelper = ret == 'N' || ret == 'n';
+
 		while (IsProcessRunning(pi.dwProcessId))
 		{
 			bool showtext = true;
-		
+
+			if (launchNvidiaHelper)
+			{
+				launchNvidiaHelper = false;
+				goto launchnvhelper;
+			}
+
 		back:
 			ret = showtext ? pressanykey("Game is still running.\r\n") : pressanykey("");
-		
+
+		launchnvhelper:
 			if (ret == 'n' || ret == 'N')
 			{
 				LaunchNvidiaOptimusTool();
 				showtext = false;
 				goto back;
 			}
+
 			r = ret == 'R' || ret == 'r';
 		}
 	}
