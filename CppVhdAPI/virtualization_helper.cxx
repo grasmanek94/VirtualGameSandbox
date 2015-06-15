@@ -175,17 +175,31 @@ void ConfigureBoxedAppSDK()
 	SetEnvironmentVariable("COMPUTERNAME", "User");
 	SetEnvironmentVariable("USERNAME", "User");
 	SetEnvironmentVariable("HOMEPATH", "\\User");
-
+	
 	typedef std::pair<std::string, std::string> redirection;
 	std::vector<redirection> NvidiaOptimusFix = 
 	{
-		redirection(MountLetter + ":\\User\\ProgramData\\NVIDIA Corporation\\",							GetEnvString("ALLUSERSPROFILE") + "\\NVIDIA Corporation\\"),
-		//redirection(MountLetter + ":\\User\\ProgramFiles\\x86\\NVIDIA Corporation\\",					GetEnvString("ProgramFiles(x86)") + "\\NVIDIA Corporation\\"),
-		//redirection(MountLetter + ":\\User\\ProgramFiles\\x64\\NVIDIA Corporation\\",					GetEnvString("ProgramFiles") + "\\NVIDIA Corporation\\"),
-		redirection(MountLetter + ":\\User\\ProgramData\\NVIDIA\\",										GetEnvString("ALLUSERSPROFILE") + "\\NVIDIA\\"),
-		//redirection(MountLetter + ":\\User\\ProgramFiles\\x86\\NVIDIA Corporation\\coprocmanager\\",	GetEnvString("ProgramFiles(x86)") + "\\NVIDIA Corporation\\coprocmanager\\"),
-		//redirection(MountLetter + ":\\User\\ProgramFiles\\x64\\NVIDIA Corporation\\coprocmanager\\",	GetEnvString("ProgramFiles") + "\\NVIDIA Corporation\\coprocmanager\\"),
+		redirection(MountLetter + ":\\User\\ProgramData\\NVIDIA Corporation\\",							GetEnvString("ProgramData") + "\\NVIDIA Corporation\\"),
+		redirection(MountLetter + ":\\User\\ProgramFiles\\x86\\NVIDIA Corporation\\",					GetEnvString("ProgramFiles(x86)") + "\\NVIDIA Corporation\\"),
+		redirection(MountLetter + ":\\User\\ProgramFiles\\x64\\NVIDIA Corporation\\",					GetEnvString("ProgramFiles") + "\\NVIDIA Corporation\\"),
+		redirection(MountLetter + ":\\User\\ProgramData\\NVIDIA\\",										GetEnvString("ProgramData") + "\\NVIDIA\\"),
+		redirection(MountLetter + ":\\User\\ProgramFiles\\x86\\NVIDIA Corporation\\coprocmanager\\",	GetEnvString("ProgramFiles(x86)") + "\\NVIDIA Corporation\\coprocmanager\\"),
+		redirection(MountLetter + ":\\User\\ProgramFiles\\x64\\NVIDIA Corporation\\coprocmanager\\",	GetEnvString("ProgramFiles") + "\\NVIDIA Corporation\\coprocmanager\\"),
 	};
+
+	////NVIDIA Optimnus fix
+	for (auto i : NvidiaOptimusFix)
+	{
+		BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, i.first.c_str(), i.second.c_str());
+		BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, i.second.c_str(), i.first.c_str());
+		//std::string command(
+		//	"robocopy \"" +
+		//	boost::replace_all_copy(boost::replace_all_copy(i.second, "\"", ""), "\\", "/") + "\" \"" +
+		//	boost::replace_all_copy(boost::replace_all_copy(i.first, "\"", ""), "\\", "/") +
+		//	"\" /E /B /COPYALL /W:0 /R:0 /XO > NUL");
+		////std::cout << command << std::endl;
+		//system(command.c_str());
+	}
 
 	PerformRedirectionEnv("USERPROFILE", (MountLetter + ":\\User").c_str());
 	PerformRedirectionEnv("PUBLIC", (MountLetter + ":\\User").c_str());
@@ -193,30 +207,16 @@ void ConfigureBoxedAppSDK()
 	PerformRedirectionEnv("LOCALAPPDATA", (MountLetter + ":\\User\\AppData\\Local").c_str());
 	PerformRedirectionEnv("ALLUSERSPROFILE", (MountLetter + ":\\User\\ProgramData").c_str());
 	PerformRedirectionEnv("ProgramData", (MountLetter + ":\\User\\ProgramData").c_str());
-	//PerformRedirectionEnv("ProgramFiles", (MountLetter + ":\\User\\ProgramFiles\\x64").c_str());
-	//PerformRedirectionEnv("ProgramFiles(x86)", (MountLetter + ":\\User\\ProgramFiles\\x86").c_str());
-	//PerformRedirectionEnv("ProgramW6432", (MountLetter + ":\\User\\ProgramFiles\\x64").c_str());
+	PerformRedirectionEnv("ProgramFiles", (MountLetter + ":\\User\\ProgramFiles\\x64").c_str());
+	PerformRedirectionEnv("ProgramFiles(x86)", (MountLetter + ":\\User\\ProgramFiles\\x86").c_str());
+	PerformRedirectionEnv("ProgramW6432", (MountLetter + ":\\User\\ProgramFiles\\x64").c_str());
 	PerformRedirectionEnv("CommonProgramFiles", (MountLetter + ":\\User\\ProgramFiles\\Common\\x64").c_str());
 	PerformRedirectionEnv("CommonProgramFiles(x86)", (MountLetter + ":\\User\\ProgramFiles\\Common\\x86").c_str());
 	PerformRedirectionEnv("CommonProgramW6432", (MountLetter + ":\\User\\ProgramFiles\\Common\\x64").c_str());
 
-	//NVIDIA Optimnus fix
-	for (auto i : NvidiaOptimusFix)
-	{
-		BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, i.first.c_str(), i.second.c_str());
-	}
-
-	//LoadLibraryA("detoured.dll");
-	//LoadLibraryA("nvd3d9wrap.dll");
-	//LoadLibraryA("nvdxgiwrap.dll");
-	//LoadLibraryA("nvinit.dll");
-	//LoadLibraryA("nvumdshim.dll");
-	//LoadLibraryA("detoured.dll");
-	//LoadLibraryA("nvd3d9wrap.dll");
-	//LoadLibraryA("nvdxgiwrap.dll");
-	//LoadLibraryA("nvinit.dll");
-	//LoadLibraryA("nvumdshim.dll");
-
+	SetEnvironmentVariable("SESSIONNAME", "Console");
+	SetEnvironmentVariable("SHIM_MCCOMPAT", "0x810000001");
+	SetEnvironmentVariable("NVIDIAWHITELISTED", "0x01");
 #ifdef REGEMU
 	registrydathandle = GetRegistryFileHandle();
 	if (registrydathandle != INVALID_HANDLE_VALUE)
