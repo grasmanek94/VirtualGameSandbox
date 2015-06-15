@@ -212,7 +212,7 @@ void ConfigureBoxedAppSDK()
 	//redirection
 	PerformRedirectionEnv("USERPROFILE", (MountLetter + ":\\User").c_str());
 	PerformRedirectionEnv("PUBLIC", (MountLetter + ":\\User").c_str());
-	PerformRedirectionEnv("APPDATA", (MountLetter + ":\\User\\AppData").c_str());
+	PerformRedirectionEnv("APPDATA", (MountLetter + ":\\User\\AppData\\Roaming").c_str());
 	PerformRedirectionEnv("LOCALAPPDATA", (MountLetter + ":\\User\\AppData\\Local").c_str());
 	PerformRedirectionEnv("ALLUSERSPROFILE", (MountLetter + ":\\User\\ProgramData").c_str());
 	PerformRedirectionEnv("ProgramData", (MountLetter + ":\\User\\ProgramData").c_str());
