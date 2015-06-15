@@ -190,6 +190,15 @@ void ConfigureBoxedAppSDK()
 
 	for (auto i : NvidiaOptimusFix)
 	{
+		//it seems a copy of these files is somehow needed for Trackmania because.. boxedapp + trackmania == ????
+		std::string command(
+			"robocopy \"" +
+			boost::replace_all_copy(boost::replace_all_copy(i.second, "\"", ""), "\\", "/") + "\" \"" +
+			boost::replace_all_copy(boost::replace_all_copy(i.first, "\"", ""), "\\", "/") +
+			"\" /E /B /COPYALL /W:0 /R:0 /XO > NUL");
+		//std::cout << command << std::endl;
+		system(command.c_str());
+
 		BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, i.first.c_str(), i.second.c_str());
 		BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, i.second.c_str(), i.first.c_str());
 	}
