@@ -297,6 +297,8 @@ bool LaunchGame(void)
 {
 	std::cout << "Preparing process startup..." << std::flush;
 
+	SetConsoleTitleA(Config.ApplicationProcess.c_str());
+
 	bool r = true;
 	while (r)
 	{
