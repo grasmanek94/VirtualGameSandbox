@@ -195,7 +195,7 @@ void ConfigureBoxedAppSDK()
 			"robocopy \"" +
 			boost::replace_all_copy(boost::replace_all_copy(i.second, "\"", ""), "\\", "/") + "\" \"" +
 			boost::replace_all_copy(boost::replace_all_copy(i.first, "\"", ""), "\\", "/") +
-			"\" /E /B /COPYALL /W:0 /R:0 /XO > NUL");
+			"\" /E /B /COPYALL /W:0 /R:0 > NUL");
 		//std::cout << command << std::endl;
 		system(command.c_str());
 		//well at least the issues are fixed now too!
