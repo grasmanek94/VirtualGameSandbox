@@ -61,6 +61,30 @@ bool SET_VALUE(const string& file, const string& newvalue)
 	return true;
 }
 
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+
+bool XML_SET_VALUE_STR(const string& file, const string& path, const string& newvalue)
+{
+	std::string resultfile = MountPoint + file;
+	boost::property_tree::ptree pt;
+	try
+	{
+		boost::property_tree::read_xml(resultfile, pt, boost::property_tree::xml_parser::trim_whitespace, std::locale());
+
+		pt.put(path, newvalue);
+
+		boost::property_tree::xml_writer_settings<std::string> settings('\t', 1, "ASCII");
+		boost::property_tree::write_xml(resultfile, pt, std::locale(), settings);
+	}
+	catch (...)
+	{
+		return false;
+	}
+	return true;
+}
+	
+
 // This function will register the application interface
 #define REGISTER(a,b) r = engine->RegisterGlobalFunction(a, asFUNCTION(b), asCALL_CDECL); assert(r >= 0)
 int ConfigureIniForScriptEngine(asIScriptEngine *engine)
@@ -69,5 +93,6 @@ int ConfigureIniForScriptEngine(asIScriptEngine *engine)
 
 	REGISTER("bool INI_SET_VALUE_STR(const string& in, const string& in, const string& in, const string& in)", INI_SET_VALUE_STR);
 	REGISTER("bool SET_VALUE(const string& in, const string& in)", SET_VALUE);
+	REGISTER("bool XML_SET_VALUE_STR(const string& in, const string& in, const string& in)", XML_SET_VALUE_STR);
 	return 0;
 }

@@ -9,6 +9,7 @@ bool REG_SOFTWARE_SET_BYTES(int type, const string& key, const string& valueName
 bool REG_SOFTWARE_SET_DWORD(int type, const string& key, const string& valueName, int value, int datatype, int ACCESS);
 bool REG_SOFTWARE_FLUSH(int type, const string& key, int ACCESS);
 bool INI_SET_VALUE_STR(const string& file, const string& section, const string& key, const string& newvalue);
+bool XML_SET_VALUE_STR(const string& file, const string& path, const string& newvalue);
 bool DIRECTORY_EXISTS(const string& directory);
 bool MOVE(const string& old, const string& new); //rename or move file or directory
 bool SET_VALUE(const string& file, const string& content);
@@ -51,15 +52,9 @@ int KEY_WOW64_RES = (0x0300);
 //
 int KEY_ALL_ACCESS = 0xF003F;
 
-array<string> charset =
-{
-	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-	"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
-};
-
 int main()
 {
-	INI_SET_VALUE_STR("Game\\Binaries\\Win32\\steam_api.ini", "Settings", "UserName", GetConfig("GameConfig.Nickname"));
+	INI_SET_VALUE_STR("Game\\Binaries\\Win32\\SKIDROW.ini", "Settings", "PlayerName", GetConfig("GameConfig.Nickname"));
 
 	print("Config OK\r\n");
 	return 0;
