@@ -41,6 +41,26 @@ bool INI_SET_VALUE_STR(const string& file, const string& section, const string& 
 	return true;
 }
 
+bool SET_VALUE(const string& file, const string& newvalue)
+{
+	std::string resultfile = MountPoint + file;
+
+	FILE* fileptr = fopen(resultfile.c_str(), "w");
+	if (!fileptr)
+	{
+		return false;
+	}
+
+	if (fwrite(newvalue.c_str(), newvalue.size() + 1, 1, fileptr) != 1)
+	{
+		fclose(fileptr);
+		return false;
+	}
+
+	fclose(fileptr);
+	return true;
+}
+
 // This function will register the application interface
 #define REGISTER(a,b) r = engine->RegisterGlobalFunction(a, asFUNCTION(b), asCALL_CDECL); assert(r >= 0)
 int ConfigureIniForScriptEngine(asIScriptEngine *engine)
@@ -48,5 +68,6 @@ int ConfigureIniForScriptEngine(asIScriptEngine *engine)
 	int r;
 
 	REGISTER("bool INI_SET_VALUE_STR(const string& in, const string& in, const string& in, const string& in)", INI_SET_VALUE_STR);
+	REGISTER("bool SET_VALUE(const string& in, const string& in)", SET_VALUE);
 	return 0;
 }

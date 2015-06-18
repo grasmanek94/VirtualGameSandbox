@@ -8,6 +8,10 @@ bool REG_SOFTWARE_SET_STR(int type, const string& key, const string& valueName, 
 bool REG_SOFTWARE_SET_BYTES(int type, const string& key, const string& valueName, const char bytes[], int size, int ACCESS);
 bool REG_SOFTWARE_SET_DWORD(int type, const string& key, const string& valueName, int value, int datatype, int ACCESS);
 bool REG_SOFTWARE_FLUSH(int type, const string& key, int ACCESS);
+bool INI_SET_VALUE_STR(const string& file, const string& section, const string& key, const string& newvalue);
+bool DIRECTORY_EXISTS(const string& directory);
+bool MOVE(const string& old, const string& new); //rename or move file or directory
+bool SET_VALUE(const string& file, const string& content);
 
 Some objects that are available:
 

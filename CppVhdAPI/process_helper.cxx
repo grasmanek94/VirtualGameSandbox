@@ -1,4 +1,3 @@
-#include <Windows.h>
 #include <string>
 #include <iostream>
 
@@ -302,6 +301,11 @@ bool LaunchGame(void)
 	bool r = true;
 	while (r)
 	{
+		if (GetAsyncKeyState(VK_LSHIFT) || GetAsyncKeyState(VK_RSHIFT) || GetAsyncKeyState(VK_SHIFT))
+		{
+			pressanykey("Press a key to launch...");
+		}
+
 		DWORD dwFlags = CREATE_SUSPENDED | INHERIT_PARENT_AFFINITY;
 		STARTUPINFO si;
 		PROCESS_INFORMATION pi = PROCESS_INFORMATION();
