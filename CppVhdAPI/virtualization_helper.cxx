@@ -19,6 +19,8 @@
 
 #include "string_converters.hxx"
 
+#include "platform_helper.hxx"
+
 void BoxedAppDLLChecks(void)
 {
 
@@ -73,11 +75,15 @@ void BoxedAppDLLChecks(void)
 
 void PerformRedirectionEnv(std::string source, std::string dest)
 {
-	std::string current(getenv(source.c_str()));
+	char * ptr = getenv(source.c_str());
+	if (ptr)
+	{
+		std::string current(ptr);
 
-	std::cout << "RD<" << current << ">=<" << dest << ">" << std::endl;
-	SetEnvironmentVariableA(source.c_str(), dest.c_str());
-	BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_WriteCopy, current.c_str(), dest.c_str());
+		std::cout << "RD<" << current << ">=<" << dest << ">" << std::endl;
+		SetEnvironmentVariableA(source.c_str(), dest.c_str());
+		BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_WriteCopy, current.c_str(), dest.c_str());
+	}
 }
 
 void PerformSpecialRedirection(GUID csidl, std::string dest)
@@ -91,7 +97,12 @@ void PerformSpecialRedirection(GUID csidl, std::string dest)
 
 std::string GetEnvString(std::string var)
 {
-	return std::string(getenv(var.c_str()));
+	char * ptr = getenv(var.c_str());
+	if (ptr)
+	{
+		return std::string(ptr);
+	}
+	return "";
 }
 
 void ConfigureBoxedAppSDK()
@@ -189,30 +200,46 @@ void ConfigureBoxedAppSDK()
 	
 	////NVIDIA Optimnus fix --START--
 	typedef std::pair<std::string, std::string> redirection;
+
+	std::string env_pfiles[2];
+	if (IsSystem32BitOnly())
+	{
+		env_pfiles[0] = "ProgramFiles";
+		env_pfiles[1] = "";
+	}
+	else
+	{
+		env_pfiles[0] = "ProgramFiles(x86)";
+		env_pfiles[1] = "ProgramFiles";
+	}
+
 	std::vector<redirection> NvidiaOptimusFix = 
 	{
 		redirection(MountLetter + ":\\User\\ProgramData\\NVIDIA Corporation\\",							GetEnvString("ProgramData") + "\\NVIDIA Corporation\\"),
-		redirection(MountLetter + ":\\User\\ProgramFiles\\x86\\NVIDIA Corporation\\",					GetEnvString("ProgramFiles(x86)") + "\\NVIDIA Corporation\\"),
-		redirection(MountLetter + ":\\User\\ProgramFiles\\x64\\NVIDIA Corporation\\",					GetEnvString("ProgramFiles") + "\\NVIDIA Corporation\\"),
+		redirection(MountLetter + ":\\User\\ProgramFiles\\x86\\NVIDIA Corporation\\",					GetEnvString(env_pfiles[0]) + "\\NVIDIA Corporation\\"),
+		redirection(MountLetter + ":\\User\\ProgramFiles\\x64\\NVIDIA Corporation\\",					GetEnvString(env_pfiles[1]) + "\\NVIDIA Corporation\\"),
 		redirection(MountLetter + ":\\User\\ProgramData\\NVIDIA\\",										GetEnvString("ProgramData") + "\\NVIDIA\\"),
-		redirection(MountLetter + ":\\User\\ProgramFiles\\x86\\NVIDIA Corporation\\coprocmanager\\",	GetEnvString("ProgramFiles(x86)") + "\\NVIDIA Corporation\\coprocmanager\\"),
-		redirection(MountLetter + ":\\User\\ProgramFiles\\x64\\NVIDIA Corporation\\coprocmanager\\",	GetEnvString("ProgramFiles") + "\\NVIDIA Corporation\\coprocmanager\\"),
+		redirection(MountLetter + ":\\User\\ProgramFiles\\x86\\NVIDIA Corporation\\coprocmanager\\",	GetEnvString(env_pfiles[0]) + "\\NVIDIA Corporation\\coprocmanager\\"),
+		redirection(MountLetter + ":\\User\\ProgramFiles\\x64\\NVIDIA Corporation\\coprocmanager\\",	GetEnvString(env_pfiles[1]) + "\\NVIDIA Corporation\\coprocmanager\\"),
 	};
 
 	for (auto i : NvidiaOptimusFix)
 	{
 		//it seems a copy of these files is somehow needed for Trackmania because.. boxedapp + trackmania == ????
-		std::string command(
-			"robocopy \"" +
-			boost::replace_all_copy(boost::replace_all_copy(i.second, "\"", ""), "\\", "/") + "\" \"" +
-			boost::replace_all_copy(boost::replace_all_copy(i.first, "\"", ""), "\\", "/") +
-			"\" /E /B /COPYALL /W:0 /R:0 > NUL");
-		//std::cout << command << std::endl;
-		system(command.c_str());
-		//well at least the issues are fixed now too!
+		if (i.second[1] == ':')
+		{
+			std::string command(
+				"robocopy \"" +
+				boost::replace_all_copy(boost::replace_all_copy(i.second, "\"", ""), "\\", "/") + "\" \"" +
+				boost::replace_all_copy(boost::replace_all_copy(i.first, "\"", ""), "\\", "/") +
+				"\" /E /B /COPYALL /W:0 /R:0 > NUL");
+			//std::cout << command << std::endl;
+			system(command.c_str());
+			//well at least the issues are fixed now too!
 
-		BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, i.first.c_str(), i.second.c_str());
-		BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, i.second.c_str(), i.first.c_str());
+			BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, i.first.c_str(), i.second.c_str());
+			BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_Full, i.second.c_str(), i.first.c_str());
+		}
 	}
 
 	SetEnvironmentVariable("SESSIONNAME", "Console");
@@ -235,13 +262,17 @@ void ConfigureBoxedAppSDK()
 	PerformRedirectionEnv("LOCALAPPDATA", MountLetter + ":\\User\\AppData\\Local");
 	PerformRedirectionEnv("ALLUSERSPROFILE", MountLetter + ":\\User\\ProgramData");
 	PerformRedirectionEnv("ProgramData", MountLetter + ":\\User\\ProgramData");
-	PerformRedirectionEnv("ProgramFiles", MountLetter + ":\\User\\ProgramFiles\\x64");
-	PerformRedirectionEnv("ProgramFiles(x86)", MountLetter + ":\\User\\ProgramFiles\\x86");
-	PerformRedirectionEnv("ProgramW6432", MountLetter + ":\\User\\ProgramFiles\\x64");
-	PerformRedirectionEnv("CommonProgramFiles", MountLetter + ":\\User\\ProgramFiles\\Common\\x64");
-	PerformRedirectionEnv("CommonProgramFiles(x86)", MountLetter + ":\\User\\ProgramFiles\\Common\\x86");
-	PerformRedirectionEnv("CommonProgramW6432", MountLetter + ":\\User\\ProgramFiles\\Common\\x64");
+	PerformRedirectionEnv(env_pfiles[0], MountLetter + ":\\User\\ProgramFiles\\x86");
 
+	PerformRedirectionEnv("Common" + env_pfiles[0], MountLetter + ":\\User\\ProgramFiles\\Common\\x86");
+		
+	if (!IsSystem32BitOnly())
+	{
+		PerformRedirectionEnv("CommonProgramW6432", MountLetter + ":\\User\\ProgramFiles\\Common\\x64");
+		PerformRedirectionEnv("ProgramW6432", MountLetter + ":\\User\\ProgramFiles\\x64");
+		PerformRedirectionEnv(env_pfiles[1], MountLetter + ":\\User\\ProgramFiles\\x64");
+		PerformRedirectionEnv("Common" + env_pfiles[1], MountLetter + ":\\User\\ProgramFiles\\Common\\x64");
+	}
 
 #ifdef REGEMU
 	registrydathandle = GetRegistryFileHandle();

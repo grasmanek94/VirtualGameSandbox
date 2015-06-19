@@ -73,6 +73,7 @@
     <ClCompile Include="nvidiaHelper.cxx">
       <Filter>Nvidia</Filter>
     </ClCompile>
+    <ClCompile Include="platform_helper.cxx" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="angelscript">
@@ -165,6 +166,7 @@
     <ClInclude Include="nvidiaHelper.hxx">
       <Filter>Nvidia</Filter>
     </ClInclude>
+    <ClInclude Include="platform_helper.hxx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\BoxedAppSDK\BoxedAppGuide_en.pdf">

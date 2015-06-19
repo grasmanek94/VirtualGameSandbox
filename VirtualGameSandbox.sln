@@ -18,6 +18,9 @@ Global
 		Release|ARM = Release|ARM
 		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
+		ReleaseRemote|ARM = ReleaseRemote|ARM
+		ReleaseRemote|Win32 = ReleaseRemote|Win32
+		ReleaseRemote|x64 = ReleaseRemote|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{577416E0-C081-47D2-9001-34E38C2BBA99}.Debug|ARM.ActiveCfg = Debug|Win32
@@ -28,6 +31,10 @@ Global
 		{577416E0-C081-47D2-9001-34E38C2BBA99}.Release|Win32.ActiveCfg = Release|Win32
 		{577416E0-C081-47D2-9001-34E38C2BBA99}.Release|Win32.Build.0 = Release|Win32
 		{577416E0-C081-47D2-9001-34E38C2BBA99}.Release|x64.ActiveCfg = Release|Win32
+		{577416E0-C081-47D2-9001-34E38C2BBA99}.ReleaseRemote|ARM.ActiveCfg = ReleaseRemote|Win32
+		{577416E0-C081-47D2-9001-34E38C2BBA99}.ReleaseRemote|Win32.ActiveCfg = ReleaseRemote|Win32
+		{577416E0-C081-47D2-9001-34E38C2BBA99}.ReleaseRemote|Win32.Build.0 = ReleaseRemote|Win32
+		{577416E0-C081-47D2-9001-34E38C2BBA99}.ReleaseRemote|x64.ActiveCfg = ReleaseRemote|Win32
 		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Debug|ARM.ActiveCfg = Debug|ARM
 		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Debug|ARM.Build.0 = Debug|ARM
 		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Debug|Win32.ActiveCfg = Debug|Win32
@@ -40,6 +47,12 @@ Global
 		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Release|Win32.Build.0 = Release|Win32
 		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Release|x64.ActiveCfg = Release|x64
 		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.Release|x64.Build.0 = Release|x64
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.ReleaseRemote|ARM.ActiveCfg = ReleaseRemote|ARM
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.ReleaseRemote|ARM.Build.0 = ReleaseRemote|ARM
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.ReleaseRemote|Win32.ActiveCfg = ReleaseRemote|Win32
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.ReleaseRemote|Win32.Build.0 = ReleaseRemote|Win32
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.ReleaseRemote|x64.ActiveCfg = ReleaseRemote|x64
+		{39E6AF97-6BA3-4A72-8C61-BCEBF214EBFD}.ReleaseRemote|x64.Build.0 = ReleaseRemote|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

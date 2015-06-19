@@ -10,6 +10,8 @@
 #include <string>
 #include <fstream>
 
+#include "platform_helper.hxx"
+
 void LaunchNvidiaOptimusTool(void)
 {
 	STARTUPINFO startupinfo;
@@ -26,18 +28,13 @@ void LaunchNvidiaOptimusTool(void)
 	unsigned char* application = nullptr;
 	size_t size = 0;
 
-#ifndef _WIN64			
-	BOOL isWow64Process = FALSE;
-	IsWow64Process(GetCurrentProcess(), &isWow64Process);
-
-	if (!isWow64Process)
+	if (IsSystem32BitOnly())
 	{
 		application = nvOptimusTool_x86;
 		size = sizeof(nvOptimusTool_x86);
 		tmp += "\\NvOptimusTestViewer.exe";
 	}
 	else
-#endif
 	{
 		application = nvOptimusTool_x64;
 		size = sizeof(nvOptimusTool_x64);

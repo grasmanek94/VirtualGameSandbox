@@ -10,7 +10,6 @@
 #include "process_helper.hxx"
 #include "virtualization_helper.hxx"
 #include "config.hxx"
-
 #include "nviddiaoptimusfixer.hxx"
 
 void ShowHello()
