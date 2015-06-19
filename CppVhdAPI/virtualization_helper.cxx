@@ -270,8 +270,8 @@ void ConfigureBoxedAppSDK()
 	{
 		PerformRedirectionEnv("CommonProgramW6432", MountLetter + ":\\User\\ProgramFiles\\Common\\x64");
 		PerformRedirectionEnv("ProgramW6432", MountLetter + ":\\User\\ProgramFiles\\x64");
-		PerformRedirectionEnv(env_pfiles[0], MountLetter + ":\\User\\ProgramFiles\\x64");
-		PerformRedirectionEnv("Common" + env_pfiles[0], MountLetter + ":\\User\\ProgramFiles\\Common\\x64");
+		PerformRedirectionEnv(env_pfiles[1], MountLetter + ":\\User\\ProgramFiles\\x64");
+		PerformRedirectionEnv("Common" + env_pfiles[1], MountLetter + ":\\User\\ProgramFiles\\Common\\x64");
 	}
 
 #ifdef REGEMU
