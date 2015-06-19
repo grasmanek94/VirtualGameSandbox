@@ -201,16 +201,11 @@ void ConfigureBoxedAppSDK()
 	////NVIDIA Optimnus fix --START--
 	typedef std::pair<std::string, std::string> redirection;
 
-	std::string env_pfiles[2];
-	if (IsSystem32BitOnly())
+	std::string env_pfiles[2] = { "ProgramFiles", "" };
+	if (!IsSystem32BitOnly())
 	{
-		env_pfiles[0] = "ProgramFiles";
-		env_pfiles[1] = "";
-	}
-	else
-	{
-		env_pfiles[0] = "ProgramFiles(x86)";
-		env_pfiles[1] = "ProgramFiles";
+		env_pfiles[0].append("(x86)");
+		env_pfiles[1].append("ProgramFiles");
 	}
 
 	std::vector<redirection> NvidiaOptimusFix = 
@@ -262,17 +257,10 @@ void ConfigureBoxedAppSDK()
 	PerformRedirectionEnv("LOCALAPPDATA", MountLetter + ":\\User\\AppData\\Local");
 	PerformRedirectionEnv("ALLUSERSPROFILE", MountLetter + ":\\User\\ProgramData");
 	PerformRedirectionEnv("ProgramData", MountLetter + ":\\User\\ProgramData");
-	PerformRedirectionEnv(env_pfiles[0], MountLetter + ":\\User\\ProgramFiles\\x86");
-
-	PerformRedirectionEnv("Common" + env_pfiles[0], MountLetter + ":\\User\\ProgramFiles\\Common\\x86");
-		
-	if (!IsSystem32BitOnly())
-	{
-		PerformRedirectionEnv("CommonProgramW6432", MountLetter + ":\\User\\ProgramFiles\\Common\\x64");
-		PerformRedirectionEnv("ProgramW6432", MountLetter + ":\\User\\ProgramFiles\\x64");
-		PerformRedirectionEnv(env_pfiles[1], MountLetter + ":\\User\\ProgramFiles\\x64");
-		PerformRedirectionEnv("Common" + env_pfiles[1], MountLetter + ":\\User\\ProgramFiles\\Common\\x64");
-	}
+	PerformRedirectionEnv("ProgramFiles", MountLetter + ":\\User\\ProgramFiles\\x86");
+	PerformRedirectionEnv("CommonProgramFiles", MountLetter + ":\\User\\ProgramFiles\\Common\\x86");
+	PerformRedirectionEnv("CommonProgramW6432", MountLetter + ":\\User\\ProgramFiles\\Common\\x64");
+	PerformRedirectionEnv("ProgramW6432", MountLetter + ":\\User\\ProgramFiles\\x64");
 
 #ifdef REGEMU
 	registrydathandle = GetRegistryFileHandle();
