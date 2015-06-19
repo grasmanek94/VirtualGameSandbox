@@ -54,7 +54,7 @@ int KEY_ALL_ACCESS = 0xF003F;
 
 int main()
 {
-	INI_SET_VALUE_STR("Game\\Binaries\\Win32\\SKIDROW.ini", "Settings", "PlayerName", GetConfig("GameConfig.Nickname"));
+	INI_SET_VALUE_STR("Game\\steam_api.ini", "Settings", "UserName", GetConfig("GameConfig.Nickname"));
 
 	print("Config OK\r\n");
 	return 0;

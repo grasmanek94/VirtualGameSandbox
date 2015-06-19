@@ -17,6 +17,8 @@
 
 #include "virtualization_helper.hxx"
 
+#include "string_converters.hxx"
+
 void BoxedAppDLLChecks(void)
 {
 
@@ -78,16 +80,11 @@ void PerformRedirectionEnv(std::string source, std::string dest)
 	BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_WriteCopy, current.c_str(), dest.c_str());
 }
 
-std::string GetSpecialFolderPathStr(int csidl)
+void PerformSpecialRedirection(GUID csidl, std::string dest)
 {
-	char path[MAX_PATH];
-	SHGetFolderPathA(NULL, CSIDL_COMMON_APPDATA, NULL, 0, path);
-	return std::string(path);
-}
-
-void PerformSpecialRedirection(int csidl, std::string dest)
-{
-	std::string source(GetSpecialFolderPathStr(csidl));
+	wchar_t* shfolderpath = 0;
+	SHGetKnownFolderPath(csidl, NULL, NULL, &shfolderpath);
+	std::string source(ws2s(std::wstring(shfolderpath)));
 	std::cout << "RD<" << source  << ">=<" << dest << ">" << std::endl;
 	BoxedAppSDK_SetFileIsolationModeA(BxIsolationMode_WriteCopy, source.c_str(), dest.c_str());
 }
@@ -224,6 +221,14 @@ void ConfigureBoxedAppSDK()
 	////NVIDIA Optimnus fix ---END---
 
 	//redirection
+	PerformSpecialRedirection(FOLDERID_RoamingAppData, MountLetter + ":\\User\\AppData\\Roaming");
+	PerformSpecialRedirection(FOLDERID_PublicDocuments, MountLetter + ":\\User\\Documents");
+	PerformSpecialRedirection(FOLDERID_Documents, MountLetter + ":\\User\\Documents");
+	PerformSpecialRedirection(FOLDERID_LocalAppData, MountLetter + ":\\User\\AppData\\Local");
+	PerformSpecialRedirection(FOLDERID_LocalAppDataLow, MountLetter + ":\\User\\AppData\\LocalLow");
+	PerformSpecialRedirection(FOLDERID_Profile, MountLetter + ":\\User\\");
+	PerformSpecialRedirection(FOLDERID_Desktop, MountLetter + ":\\User\\Desktop");
+
 	PerformRedirectionEnv("USERPROFILE", MountLetter + ":\\User");
 	PerformRedirectionEnv("PUBLIC", MountLetter + ":\\User");
 	PerformRedirectionEnv("APPDATA", MountLetter + ":\\User\\AppData\\Roaming");
@@ -237,15 +242,6 @@ void ConfigureBoxedAppSDK()
 	PerformRedirectionEnv("CommonProgramFiles(x86)", MountLetter + ":\\User\\ProgramFiles\\Common\\x86");
 	PerformRedirectionEnv("CommonProgramW6432", MountLetter + ":\\User\\ProgramFiles\\Common\\x64");
 
-	PerformSpecialRedirection(CSIDL_COMMON_APPDATA, MountLetter + ":\\User\\AppData\\Roaming");
-	PerformSpecialRedirection(CSIDL_APPDATA, MountLetter + ":\\User\\AppData\\Roaming");
-	PerformSpecialRedirection(CSIDL_COMMON_DOCUMENTS, MountLetter + ":\\User\\Documents");
-	PerformSpecialRedirection(CSIDL_MYDOCUMENTS, MountLetter + ":\\User\\Documents");
-	PerformSpecialRedirection(CSIDL_LOCAL_APPDATA, MountLetter + ":\\User\\AppData\\Local");
-	PerformSpecialRedirection(CSIDL_PROFILE, MountLetter + ":\\User\\");
-	PerformSpecialRedirection(CSIDL_DESKTOP, MountLetter + ":\\User\\Desktop");
-	PerformSpecialRedirection(CSIDL_COOKIES, MountLetter + ":\\User\\Cookies");
-	PerformSpecialRedirection(CSIDL_COMMON_DESKTOPDIRECTORY, MountLetter + ":\\User\\Cookies");
 
 #ifdef REGEMU
 	registrydathandle = GetRegistryFileHandle();
