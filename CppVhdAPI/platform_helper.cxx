@@ -6,7 +6,10 @@
 
 bool IsSystem32BitOnly()
 {	
-#ifndef _WIN64
+#ifdef _WIN64
+	return false;
+#endif
+
 	BOOL isWow64Process = FALSE;
 	IsWow64Process(GetCurrentProcess(), &isWow64Process);
 
@@ -17,10 +20,9 @@ bool IsSystem32BitOnly()
 		return false;
 	}
 	else
-#endif
 	{
 		//do other useless stuff
 		GetCurrentThread();
-		return false;
+		return true;
 	}
 }
