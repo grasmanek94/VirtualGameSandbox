@@ -20,6 +20,7 @@
     <RootNamespace>CppVhdAPI</RootNamespace>
     <ProjectName>LaunchGame</ProjectName>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -58,15 +59,18 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IntDir>$(SolutionDir)$(Configuration)\$(ProjectName)\</IntDir>
+    <IncludePath>$(BOOST_ROOT);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(SolutionDir)$(Configuration)\$(ProjectName)\</IntDir>
+    <IncludePath>$(BOOST_ROOT);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseRemote|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(SolutionDir)Release\$(ProjectName)\</IntDir>
     <OutDir>$(SolutionDir)Release\</OutDir>
+    <IncludePath>$(BOOST_ROOT);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -161,7 +165,6 @@
     <ClCompile Include="libraries.cxx" />
     <ClCompile Include="mountpoint_helper.cxx" />
     <ClCompile Include="nvidiaHelper.cxx" />
-    <ClCompile Include="nvidiaoptimusfixer.cxx" />
     <ClCompile Include="platform_helper.cxx" />
     <ClCompile Include="process_helper.cxx" />
     <ClCompile Include="randomization.cxx" />
@@ -171,16 +174,9 @@
     <ClCompile Include="Registry\Utils.cpp" />
     <ClCompile Include="Registry\Win32Exception.cpp" />
     <ClCompile Include="scripting.cxx" />
-    <ClCompile Include="string_converters.cxx" />
     <ClCompile Include="vhd_helper.cxx" />
-    <ClCompile Include="virtualization_helper.cxx" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK.h" />
-    <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK_Interfaces.h" />
-    <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK_InterfacesID.h" />
-    <ClInclude Include="..\BoxedAppSDK\bxsdk32.h" />
-    <ClInclude Include="..\BoxedAppSDK\bxsdk64.h" />
     <ClInclude Include="..\Nvidia\nvOptimusTool_x64.h" />
     <ClInclude Include="..\Nvidia\nvOptimusTool_x86.h" />
     <ClInclude Include="cleanup.hxx" />
@@ -192,7 +188,6 @@
     <ClInclude Include="Ini\SimpleIni.h" />
     <ClInclude Include="key_helper.hxx" />
     <ClInclude Include="mountpoint_helper.hxx" />
-    <ClInclude Include="nviddiaoptimusfixer.hxx" />
     <ClInclude Include="nvidiaHelper.hxx" />
     <ClInclude Include="platform_helper.hxx" />
     <ClInclude Include="process_helper.hxx" />
@@ -206,17 +201,7 @@
     <ClInclude Include="Registry\Utils.hpp" />
     <ClInclude Include="Registry\Win32Exception.hpp" />
     <ClInclude Include="scripting.hxx" />
-    <ClInclude Include="string_converters.hxx" />
     <ClInclude Include="vhd_helper.hxx" />
-    <ClInclude Include="virtualization_helper.hxx" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\BoxedAppSDK\BoxedAppGuide_en.pdf" />
-    <None Include="..\BoxedAppSDK\BoxedAppSDK.chm" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\BoxedAppSDK\bxsdk32.lib" />
-    <Library Include="..\BoxedAppSDK\bxsdk64.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

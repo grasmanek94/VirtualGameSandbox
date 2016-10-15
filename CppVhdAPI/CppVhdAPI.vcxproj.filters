@@ -45,13 +45,11 @@
     </ClCompile>
     <ClCompile Include="libraries.cxx" />
     <ClCompile Include="CppVhdAPI.cxx" />
-    <ClCompile Include="string_converters.cxx" />
     <ClCompile Include="config.cxx" />
     <ClCompile Include="file_functions.cxx" />
     <ClCompile Include="debugging.cxx" />
     <ClCompile Include="vhd_helper.cxx" />
     <ClCompile Include="process_helper.cxx" />
-    <ClCompile Include="virtualization_helper.cxx" />
     <ClCompile Include="key_helper.cxx" />
     <ClCompile Include="globalvars.cxx" />
     <ClCompile Include="scripting.cxx">
@@ -69,7 +67,6 @@
     <ClCompile Include="mountpoint_helper.cxx" />
     <ClCompile Include="cleanup.cxx" />
     <ClCompile Include="randomization.cxx" />
-    <ClCompile Include="nvidiaoptimusfixer.cxx" />
     <ClCompile Include="nvidiaHelper.cxx">
       <Filter>Nvidia</Filter>
     </ClCompile>
@@ -84,9 +81,6 @@
     </Filter>
     <Filter Include="Registry">
       <UniqueIdentifier>{50893317-9445-4818-bb79-6a31556ea3b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="BoxedAppSDK">
-      <UniqueIdentifier>{6e0a155d-efdc-47fa-b09b-58caec498023}</UniqueIdentifier>
     </Filter>
     <Filter Include="ini">
       <UniqueIdentifier>{3ebcc332-5346-4d43-b4b8-dd1f88ec8a0b}</UniqueIdentifier>
@@ -120,34 +114,17 @@
     <ClInclude Include="Registry\RegistryList.hpp">
       <Filter>Registry</Filter>
     </ClInclude>
-    <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK_InterfacesID.h">
-      <Filter>BoxedAppSDK</Filter>
-    </ClInclude>
-    <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK.h">
-      <Filter>BoxedAppSDK</Filter>
-    </ClInclude>
-    <ClInclude Include="..\BoxedAppSDK\BoxedAppSDK_Interfaces.h">
-      <Filter>BoxedAppSDK</Filter>
-    </ClInclude>
     <ClInclude Include="Ini\ConvertUTF.h">
       <Filter>ini</Filter>
     </ClInclude>
     <ClInclude Include="Ini\SimpleIni.h">
       <Filter>ini</Filter>
     </ClInclude>
-    <ClInclude Include="..\BoxedAppSDK\bxsdk32.h">
-      <Filter>BoxedAppSDK</Filter>
-    </ClInclude>
-    <ClInclude Include="..\BoxedAppSDK\bxsdk64.h">
-      <Filter>BoxedAppSDK</Filter>
-    </ClInclude>
-    <ClInclude Include="string_converters.hxx" />
     <ClInclude Include="config.hxx" />
     <ClInclude Include="file_functions.hxx" />
     <ClInclude Include="debugging.hxx" />
     <ClInclude Include="vhd_helper.hxx" />
     <ClInclude Include="process_helper.hxx" />
-    <ClInclude Include="virtualization_helper.hxx" />
     <ClInclude Include="key_helper.hxx" />
     <ClInclude Include="globalvars.hxx" />
     <ClInclude Include="scripting.hxx">
@@ -156,7 +133,6 @@
     <ClInclude Include="mountpoint_helper.hxx" />
     <ClInclude Include="cleanup.hxx" />
     <ClInclude Include="randomization.hxx" />
-    <ClInclude Include="nviddiaoptimusfixer.hxx" />
     <ClInclude Include="..\Nvidia\nvOptimusTool_x64.h">
       <Filter>Nvidia</Filter>
     </ClInclude>
@@ -167,21 +143,5 @@
       <Filter>Nvidia</Filter>
     </ClInclude>
     <ClInclude Include="platform_helper.hxx" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\BoxedAppSDK\BoxedAppGuide_en.pdf">
-      <Filter>BoxedAppSDK</Filter>
-    </None>
-    <None Include="..\BoxedAppSDK\BoxedAppSDK.chm">
-      <Filter>BoxedAppSDK</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\BoxedAppSDK\bxsdk32.lib">
-      <Filter>BoxedAppSDK</Filter>
-    </Library>
-    <Library Include="..\BoxedAppSDK\bxsdk64.lib">
-      <Filter>BoxedAppSDK</Filter>
-    </Library>
   </ItemGroup>
 </Project>
