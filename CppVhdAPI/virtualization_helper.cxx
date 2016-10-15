@@ -10,11 +10,6 @@
 #include "globalvars.hxx"
 #include "file_functions.hxx"
 
-#include "BoxedAppSDK/bxsdk32.h"
-#include "BoxedAppSDK/bxsdk64.h"
-
-#include "BoxedAppSDK/BoxedAppSDK.h"
-
 #include "virtualization_helper.hxx"
 
 #include "string_converters.hxx"

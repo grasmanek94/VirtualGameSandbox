@@ -63,89 +63,16 @@ DWORD AttachVirtualDiskEx(_In_    LPCWSTR     VirtualDiskPath, _In_	HANDLE&		vhd
 	return opStatus;
 }
 
-std::wstring GetFirstVolumeByName(int physicalDriveNumber)
-{
-	wchar_t volumeNameBuffer[MAX_PATH];
-	wchar_t volumeName2Buffer[MAX_PATH];
-
-	HANDLE search = FindFirstVolumeW(volumeNameBuffer, ARRAY_SIZE(volumeNameBuffer));
-	if (search != INVALID_HANDLE_VALUE)
-	{
-		do
-		{
-			GetVolumeInformationW(volumeNameBuffer, volumeName2Buffer, ARRAY_SIZE(volumeName2Buffer), 0, 0, 0, 0, 0);
-
-			std::wstring VolumeName = volumeName2Buffer;
-			std::wstring VolumeGUID = volumeNameBuffer;
-
-			VOLUME_DISK_EXTENTS extends;
-			SecureZeroMemory(&extends, sizeof(extends));
-			DWORD bytesReturned = 0;
-			OVERLAPPED overlapped;
-			SecureZeroMemory(&overlapped, sizeof(overlapped));
-
-			std::wstring forCreateFile(VolumeGUID);
-			if (forCreateFile[forCreateFile.length() - 1] == L'\\')
-			{
-				forCreateFile = forCreateFile.erase(forCreateFile.length() - 1);
-			}
-			HANDLE device = CreateFileW(forCreateFile.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-			int error = GetLastError();
-			if (device != INVALID_HANDLE_VALUE && !error)
-			{
-				if (DeviceIoControl((HANDLE)device,			// handle to device
-					IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS,	// dwIoControlCode
-					NULL,									// lpInBuffer
-					0,										// nInBufferSize
-					(LPVOID)&extends,						// output buffer
-					(DWORD)sizeof(extends),					// size of output buffer
-					(LPDWORD)&bytesReturned,				// number of bytes returned
-					(LPOVERLAPPED)&overlapped				// OVERLAPPED structure
-					))
-				{
-					if (extends.Extents[0].DiskNumber == physicalDriveNumber)
-					{
-						CloseHandle(device);
-						FindVolumeClose(search);
-						return VolumeGUID;
-					}
-				}
-				CloseHandle(device);
-			}
-		} while (FindNextVolumeW(search, volumeNameBuffer, ARRAY_SIZE(volumeNameBuffer)) != FALSE);
-		FindVolumeClose(search);
-		return L"";
-	}
-	return L"";
-}
-
 //
 // Simple macro to release non-null interfaces.
 //
 #define _SafeRelease(x) {if (NULL != x) { x->Release(); x = NULL; } }
 
-BOOL disk_offline(HANDLE h_file, bool enable)
-{
-	DWORD bytes_returned = 0;
-	BOOL b_offline = 0;
-	if (h_file != INVALID_HANDLE_VALUE) {
-		SET_DISK_ATTRIBUTES disk_attr;
-		ZeroMemory(&disk_attr, sizeof(disk_attr));
-		disk_attr.Version = sizeof(SET_DISK_ATTRIBUTES);
-		disk_attr.Attributes = enable ? DISK_ATTRIBUTE_OFFLINE : 0;
-		disk_attr.AttributesMask = DISK_ATTRIBUTE_OFFLINE;
-		b_offline = DeviceIoControl(h_file, IOCTL_DISK_SET_DISK_ATTRIBUTES, &disk_attr, disk_attr.Version, NULL, 0, &bytes_returned, NULL);
-		// Invalidates the cached partition table and re-enumerates the device.
-		if (!enable) BOOL b_update = DeviceIoControl(h_file, IOCTL_DISK_UPDATE_PROPERTIES, NULL, 0, NULL, 0, &bytes_returned, NULL);
-	}
-	return b_offline;
-}
-
 std::string GetFirstAvailableVHD(void)
 {
 	WIN32_FIND_DATA fileInfo;
 	HANDLE hFind;
-	hFind = FindFirstFileA("*.vhd", &fileInfo);
+	hFind = FindFirstFile("*.vhd", &fileInfo);
 
 	if (hFind == INVALID_HANDLE_VALUE)
 	{
@@ -161,14 +88,14 @@ std::string GetFirstAvailableVHD(void)
 		{
 			return std::string(fileInfo.cFileName);
 		}
-	} while (FindNextFileA(hFind, &fileInfo) != 0);
+	} while (FindNextFile(hFind, &fileInfo) != 0);
 
 	return "";
 }
 
 bool OpenGameDisk(void)
 {
-	std::cout << "Opening Game Disk..." << std::flush;
+	std::wcout << "Opening Game Disk..." << std::flush;
 
 	std::string VHD_location = "./" + GetFirstAvailableVHD();
 
@@ -190,7 +117,7 @@ bool ConfigurePathInformation(void)
 
 	// Now we need to grab the device name \\.\PhysicalDrive#
 	wchar_t  physicalDriveName[MAX_PATH];
-	DWORD   physicalDriveNameSize = ARRAY_SIZE(physicalDriveName);
+	DWORD   physicalDriveNameSize = sizeof(physicalDriveName);
 
 
 	DWORD result = GetVirtualDiskPhysicalPath(handle, &physicalDriveNameSize, physicalDriveName);
@@ -207,32 +134,6 @@ bool ConfigurePathInformation(void)
 
 bool TakeDiskOnline(void)
 {
-	std::cout << "Onlineing VDISK..." << std::flush;
-
-	PhysicalPath.erase(PhysicalPath.begin(), PhysicalPath.begin() + strlen("\\\\.\\PhysicalDrive"));
-	std::cout << "Drive : " << PhysicalPath << std::endl;
-
-	DWORD dwFlags = CREATE_SUSPENDED | INHERIT_PARENT_AFFINITY;
-	STARTUPINFO si;
-	PROCESS_INFORMATION pi = PROCESS_INFORMATION();
-	BOOL fSuccess;
-	SecureZeroMemory(&si, sizeof(STARTUPINFO));
-	si.cb = sizeof(STARTUPINFO);
-
-	std::string sysDir(getenv("SystemRoot"));
-	std::cout << "Starting mount..." << std::flush;
-	fSuccess = CreateProcess((sysDir + "\\system32\\WindowsPowerShell\\v1.0\\powershell.exe").c_str(), (LPSTR)(("\"" + sysDir + "\\system32\\WindowsPowerShell\\v1.0\\powershell.exe\" ") + "-Command \"initialize-disk " + PhysicalPath + " *>$null\"").c_str(), NULL, NULL, TRUE, dwFlags, NULL, NULL, &si, &pi);
-	if (!fSuccess)
-	{
-		DWORD error = GetLastError();
-		std::cout << "Unable to summon powershell: " << error << std::endl;
-		return false;
-	}
-
-	std::cout << "Executing mount..." << std::flush;
-	ResumeThread(pi.hThread);
-	WaitForSingleObject(pi.hProcess, INFINITE);
-	std::cout << "(Executed) OK" << std::endl;
 	return true;
 }
 
@@ -241,52 +142,61 @@ bool ConfigureVolumeInformation(void)
 	std::cout << "Configuring volume information..." << std::flush;
 
 	int physicalDriveNumber = std::atoi(PhysicalPath.c_str());
-	volumeName = GetFirstVolumeByName(physicalDriveNumber);
-	if (volumeName.size() <= 0 || volumeName.size() > 256)
-	{
-		int i = 0;
-		while (++i < 40)
-		{
-			volumeName = GetFirstVolumeByName(physicalDriveNumber);
-			if (volumeName.size() <= 0 || volumeName.size() > 256)
-			{
-				std::cout << "." << std::flush;
-				Sleep(25);
-			}
-			else
-			{
-				break;
-			}
-		}
-	}
 
-	if (volumeName.size() <= 0 || volumeName.size() > 256)
-	{
-		std::wcout << "Unable to locate a volume ('" << volumeName << "') on this VHD" << std::endl;
-		return false;
-	}
-	std::cout << "OK" << std::endl;
-	return true;
+	wchar_t volumeName[MAX_PATH];
+	DWORD bytesReturned;
+	VOLUME_DISK_EXTENTS diskExtents;
+	HANDLE hFVol = FindFirstVolumeW(volumeName, sizeof(volumeName));
+	bool hadTrailingBackslash = false;
+
+	do {
+		// I had a problem where CreateFile complained about the trailing \ and
+		// SetVolumeMountPoint desperately wanted the backslash there. I ended up 
+		// doing this to get it working but I'm not a fan and I'd greatly 
+		// appreciate it if someone has any further info on this matter
+		int backslashPos = lstrlenW(volumeName) - 1;
+		if (hadTrailingBackslash = volumeName[backslashPos] == '\\') {
+			volumeName[backslashPos] = 0;
+		}
+
+		HANDLE hVol = CreateFileW(volumeName, 0, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+		if (hVol == INVALID_HANDLE_VALUE) {
+			std::cout << "Unable to mount VHD to " << MountPoint << " (Unable to acquire volume handle)" << std::endl;
+			return false;
+		}
+
+		DeviceIoControl(hVol, IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, NULL,
+			0, &diskExtents, sizeof(diskExtents), &bytesReturned, NULL);
+
+		// If the volume were to span across multiple physical disks, you'd find 
+		// more than one Extents here but we don't have to worry about that with VHD
+		// Note that 'driveNumber' would be the integer you extracted out of 
+		// 'physicalDrive' in the previous snippet
+		if (diskExtents.Extents[0].DiskNumber == physicalDriveNumber) {
+			if (hadTrailingBackslash) {
+				volumeName[backslashPos] = '\\';
+			}
+
+			// Found volume that's on the VHD, let's mount it with a letter of our choosing.
+			// Warning: SetVolumeMountPoint requires elevation
+			std::cout << "Mounting to configured mountpoint..." << std::flush;
+			if (!SetVolumeMountPointW(s2ws(MountPoint).c_str(), volumeName))
+			{
+				std::cout << "Unable to mount VHD to " << MountPoint << " (" << GetLastError() << ")" << std::endl;
+				return false;
+			}
+			std::cout << "OK" << std::endl;
+			return true;
+		}
+	} while (FindNextVolumeW(hFVol, volumeName, sizeof(volumeName)));
+	FindVolumeClose(hFVol);
+	std::cout << "Unable to mount VHD to " << MountPoint << " (No volumes found)" << std::endl;
+
+	return false;
 }
 
 bool MountVolume(void)
 {
-	std::cout << "Mounting to configured mountpoint..." << std::flush;
-	if (!SetVolumeMountPointW(s2ws(MountPoint).c_str(), volumeName.c_str()))
-	{
-		std::cout << "Unable to mount VHD to " << MountPoint << " (" << GetLastError() << ")" << std::endl;
-		return false;
-	}
-
-	UINT dtype;
-	do
-	{
-		Sleep(25);
-		dtype = GetDriveTypeA(MountPoint.c_str());
-	} while (dtype == 1 || dtype == 0);
-
-	MountLetter = MountPoint.substr(0, 1);
-	std::cout << "OK" << std::endl;
 	return true;
 }
 

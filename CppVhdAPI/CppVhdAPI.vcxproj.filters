@@ -71,6 +71,7 @@
       <Filter>Nvidia</Filter>
     </ClCompile>
     <ClCompile Include="platform_helper.cxx" />
+    <ClCompile Include="string_converters.cxx" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="angelscript">
@@ -143,5 +144,6 @@
       <Filter>Nvidia</Filter>
     </ClInclude>
     <ClInclude Include="platform_helper.hxx" />
+    <ClInclude Include="string_converters.hxx" />
   </ItemGroup>
 </Project>
