@@ -10,6 +10,8 @@ bool UpdateMountpoint(void)
 	char p = 'Z';
 	for (; p >= 'A'; --p)
 	{
+		MountLetter = "A";
+		MountLetter[0] = p;
 		MountPoint[0] = p;
 		if (!(GetDriveTypeA(MountPoint.c_str()) != 1 && GetDriveTypeA(MountPoint.c_str()) != 0))
 		{
