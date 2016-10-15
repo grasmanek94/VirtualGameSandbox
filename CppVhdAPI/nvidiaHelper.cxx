@@ -3,8 +3,6 @@
 
 #include "file_functions.hxx"
 
-#include "BoxedAppSDK/BoxedAppSDK.h"
-
 #include <windows.h>
 
 #include <string>
@@ -23,7 +21,7 @@ void LaunchNvidiaOptimusTool(void)
 	std::string tmp;
 	tmp.reserve(MAX_PATH);
 
-	GetEnvironmentVariableA("TEMP", &tmp[0], MAX_PATH);
+	GetEnvironmentVariable("TEMP", &tmp[0], MAX_PATH);
 
 	unsigned char* application = nullptr;
 	size_t size = 0;
@@ -50,5 +48,5 @@ void LaunchNvidiaOptimusTool(void)
 			outfile.close();
 		}
 	}
-	CreateProcessA(tmp.c_str(), "", NULL, NULL, TRUE, NORMAL_PRIORITY_CLASS, NULL, NULL, &startupinfo, &processinformation);
+	CreateProcess(tmp.c_str(), "", NULL, NULL, TRUE, NORMAL_PRIORITY_CLASS, NULL, NULL, &startupinfo, &processinformation);
 }
