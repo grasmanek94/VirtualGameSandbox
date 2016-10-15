@@ -63,11 +63,6 @@ DWORD AttachVirtualDiskEx(_In_    LPCWSTR     VirtualDiskPath, _In_	HANDLE&		vhd
 	return opStatus;
 }
 
-//
-// Simple macro to release non-null interfaces.
-//
-#define _SafeRelease(x) {if (NULL != x) { x->Release(); x = NULL; } }
-
 std::string GetFirstAvailableVHD(void)
 {
 	WIN32_FIND_DATA fileInfo;
@@ -132,16 +127,11 @@ bool ConfigurePathInformation(void)
 	return true;
 }
 
-bool TakeDiskOnline(void)
-{
-	return true;
-}
-
 bool ConfigureVolumeInformation(void)
 {
 	std::cout << "Configuring volume information..." << std::flush;
 
-	int physicalDriveNumber = std::atoi(PhysicalPath.c_str());
+	int physicalDriveNumber = std::atoi(PhysicalPath.c_str() + strlen("\\\\.\\PhysicalDrive"));
 
 	wchar_t volumeName[MAX_PATH];
 	DWORD bytesReturned;
@@ -182,7 +172,7 @@ bool ConfigureVolumeInformation(void)
 			std::cout << "Mounting to configured mountpoint..." << std::flush;
 			if (!SetVolumeMountPointW(s2ws(MountPoint).c_str(), volumeName))
 			{
-				std::cout << "Unable to mount VHD to " << MountPoint << " (" << GetLastError() << ")" << std::endl;
+				std::cout << "Unable to mount VHD to " << MountPoint << " (" << GetLastError() << ") : " << ws2s(volumeName) << ":" << physicalDriveNumber << std::endl;
 				return false;
 			}
 			std::cout << "OK" << std::endl;
@@ -193,11 +183,6 @@ bool ConfigureVolumeInformation(void)
 	std::cout << "Unable to mount VHD to " << MountPoint << " (No volumes found)" << std::endl;
 
 	return false;
-}
-
-bool MountVolume(void)
-{
-	return true;
 }
 
 bool MountISO(void)

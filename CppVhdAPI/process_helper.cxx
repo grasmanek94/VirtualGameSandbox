@@ -6,6 +6,7 @@
 #include "process_helper.hxx"
 
 #include "nvidiaHelper.hxx"
+#include "scripting.hxx"
 
 BOOL IsProcessRunning(DWORD pid)
 {
@@ -314,6 +315,7 @@ bool LaunchGame(void)
 		si.cb = sizeof(STARTUPINFO);
 
 		std::cout << "Starting process..." << std::flush;
+		PerformBeforeGameLoad();
 		fSuccess = CreateProcess((MountPoint + Config.ApplicationProcess).c_str(), (LPSTR)("\"" + (MountPoint + Config.ApplicationProcess) + "\" " + Config.ApplicationParameters).c_str(), NULL, NULL, TRUE, dwFlags, NULL, (MountPoint + Config.ApplicationWorkingDir).c_str(), &si, &pi);
 		if (!fSuccess)
 		{
@@ -351,6 +353,8 @@ bool LaunchGame(void)
 
 			r = ret == 'R' || ret == 'r';
 		}
+
+		PerformAfterGameShutdown();
 	}
 	return true;
 }

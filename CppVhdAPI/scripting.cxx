@@ -369,7 +369,53 @@ bool PerformScriptExecution(void)
 	}
 	else
 	{
-		std::cout << "No script available, continuing" << std::endl;
+		std::cout << "No config (configuration.cxx) script available, continuing" << std::endl;
+	}
+	return true;
+}
+
+bool PerformBeforeGameLoad(void)
+{
+	std::string Exec_Script(MountLetter + ":\\preload.cxx");
+
+	if (FileExists(Exec_Script.c_str()))
+	{
+		std::cout << "Executing preload script..." << std::endl;
+		PrintSqs(32);
+		std::cout << " SCRIPT  OUTPUT ";
+		PrintSqs(112);
+		std::cout << std::endl;
+		TryScriptingShit(Exec_Script);
+		std::cout << std::endl;
+		PrintSqs(160);
+		std::cout << std::endl;
+	}
+	else
+	{
+		std::cout << "No preload (preload.cxx) script available, continuing" << std::endl;
+	}
+	return true;
+}
+
+bool PerformAfterGameShutdown(void)
+{
+	std::string Exec_Script(MountLetter + ":\\shutdown.cxx");
+
+	if (FileExists(Exec_Script.c_str()))
+	{
+		std::cout << "Executing shutdown script..." << std::endl;
+		PrintSqs(32);
+		std::cout << " SCRIPT  OUTPUT ";
+		PrintSqs(112);
+		std::cout << std::endl;
+		TryScriptingShit(Exec_Script);
+		std::cout << std::endl;
+		PrintSqs(160);
+		std::cout << std::endl;
+	}
+	else
+	{
+		std::cout << "No shutdown (shutdown.cxx) script available, continuing" << std::endl;
 	}
 	return true;
 }

@@ -52,17 +52,7 @@ int RunThisProgram()
 		return KeyPressCleanup();
 	}
 
-	if (!TakeDiskOnline())
-	{
-		return KeyPressCleanup();
-	}
-
 	if(!ConfigureVolumeInformation())
-	{
-		return KeyPressCleanup();
-	}
-
-	if (!MountVolume())
 	{
 		return KeyPressCleanup();
 	}
@@ -70,7 +60,6 @@ int RunThisProgram()
 	MountISO();
 
 	PerformScriptExecution();
-
 	CheckConfigAutoLaunch();
 
 	if (!LaunchGame())
