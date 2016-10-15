@@ -2,6 +2,8 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include <iostream>
+
 #include "file_functions.hxx"
 #include "key_helper.hxx"
 #include "globalvars.hxx"
