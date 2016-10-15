@@ -69,13 +69,9 @@ int RunThisProgram()
 
 	MountISO();
 
-	ConfigureBoxedAppSDK();
-
 	PerformScriptExecution();
 
 	CheckConfigAutoLaunch();
-
-	//FixNvidiaOptimusNotChainingGamesCleanUp();
 
 	if (!LaunchGame())
 	{
