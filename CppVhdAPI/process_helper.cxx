@@ -5,8 +5,6 @@
 #include "key_helper.hxx"
 #include "process_helper.hxx"
 
-#include "BoxedAppSDK/BoxedAppSDK.h"
-
 #include "nvidiaHelper.hxx"
 
 BOOL IsProcessRunning(DWORD pid)
